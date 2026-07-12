@@ -10,21 +10,17 @@ import {
   useFuelEfficiency,
   useCostTrends
 } from '../../lib/queries';
-import { 
-  VEHICLE_STATUS_COLORS 
-} from '../../lib/statusColors';
+
 import { 
   Truck, 
   Calendar, 
   TrendingUp, 
-  Wrench, 
-  Award, 
+  Wrench,
   AlertTriangle, 
   Compass, 
   Download, 
   Printer, 
   CheckCircle2,
-  Zap,
   Plus
 } from 'lucide-react';
 import { 
@@ -52,7 +48,6 @@ export const DashboardScreen: React.FC = () => {
   // Queries
   const { data: kpis, isLoading: kpisLoading } = useKPIs(demoMode);
   const { data: vehicles, isLoading: vehiclesLoading } = useVehicles(demoMode);
-  const { data: drivers, isLoading: driversLoading } = useDrivers(demoMode);
   const { data: utilizationData } = useFleetUtilization(demoMode);
   const { data: efficiencyData } = useFuelEfficiency(demoMode);
   const { data: costTrendsData } = useCostTrends(demoMode);
@@ -143,7 +138,7 @@ export const DashboardScreen: React.FC = () => {
     document.body.removeChild(link);
   };
 
-  if (kpisLoading || vehiclesLoading || driversLoading) {
+  if (kpisLoading || vehiclesLoading) {
     return (
       <div className="flex h-96 items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-500 border-t-transparent"></div>
