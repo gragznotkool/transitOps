@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_transitops_vehicle_tree" model="ir.ui.view">
+        <field name="name">transitops.vehicle.tree</field>
+        <field name="model">transitops.vehicle</field>
+        <field name="arch" type="xml">
+            <list string="Vehicles" decoration-success="current_status == 'available'" decoration-info="current_status == 'on_trip'" decoration-warning="current_status == 'in_shop'" decoration-muted="current_status == 'retired'">
+                <field name="registration_number" decoration-bf="1"/>
+                <field name="manufacturer"/>
+                <field name="model"/>
+                <field name="vehicle_type"/>
+                <field name="depot"/>
+                <field name="current_odometer" sum="Total Odometer"/>
+                <field name="assigned_driver_id"/>
+                <field name="health_score" widget="progressbar"/>
+                <field name="current_status" widget="badge" decoration-success="current_status == 'available'" decoration-info="current_status == 'on_trip'" decoration-warning="current_status == 'in_shop'" decoration-danger="current_status == 'retired'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_transitops_vehicle_kanban" model="ir.ui.view">
+        <field name="name">transitops.vehicle.kanban</field>
+        <field name="model">transitops.vehicle</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="depot" class="o_kanban_mobile">
+                <field name="id"/>
+                <field name="registration_number"/>
+                <field name="manufacturer"/>
+                <field name="model"/>
+                <field name="vehicle_type"/>
+                <field name="depot"/>
+                <field name="health_score"/>
+                <field name="current_status"/>
+                <field name="assigned_driver_id"/>
+                <field name="vehicle_image"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record" style="border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-left: 5px solid; padding: 12px; margin-bottom: 8px;"
+                             t-attf-style="border-left-color: #{record.current_status.raw_value == 'available' ? '#10b981' : record.current_status.raw_value == 'on_trip' ? '#3b82f6' : record.current_status.raw_value == 'in_shop' ? '#f59e0b' : '#6b7280'}">
+                            <div class="o_kanban_image" style="width: 60px; height: 60px; border-radius: 8px; overflow: hidden; margin-right: 12px; float: left;">
+                                <t t-if="record.vehicle_image.raw_value">
+                                    <field name="vehicle_image" widget="image" style="width: 100%; height: 100%; object-fit: cover;"/>
+                                </t>
+                                <t t-else="">
+                                    <img t-att-src='_s + "/base/static/img/avatar_grey.png"' alt="Vehicle" style="width: 100%; height: 100%; object-fit: cover;"/>
+                                </t>
+                            </div>
+                            <div class="oe_kanban_details" style="display: flex; flex-direction: column; justify-content: space-between;">
+                                <div>
+                                    <strong class="o_kanban_record_title" style="font-size: 15px; color: #1e293b;">
+                                        <field name="registration_number"/>
+                                    </strong>
+                                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                                        <field name="manufacturer"/> <field name="model"/>
+                                    </div>
+                                    <div style="font-size: 11px; color: #475569; margin-top: 4px;">
+                                        <span class="fa fa-user" title="Driver"/> <field name="assigned_driver_id"/>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="width: 65%;">
+                                        <div class="progress" style="height: 6px; margin: 0; background-color: #f1f5f9; border-radius: 3px;">
+                                            <div class="progress-bar" role="progressbar" 
+                                                 t-att-aria-valuenow="record.health_score.raw_value" aria-valuemin="0" aria-valuemax="100"
+                                                 t-attf-style="width: #{record.health_score.raw_value}%; border-radius: 3px;"
+                                                 t-attf-class="bg-#{record.health_score.raw_value &gt;= 80 ? 'success' : record.health_score.raw_value &gt;= 50 ? 'warning' : 'danger'}"/>
+                                        </div>
+                                        <span style="font-size: 10px; color: #64748b;">Health: <t t-esc="record.health_score.value"/>%</span>
+                                    </div>
+                                    <span t-attf-class="badge rounded-pill bg-#{record.current_status.raw_value == 'available' ? 'success' : record.current_status.raw_value == 'on_trip' ? 'primary' : record.current_status.raw_value == 'in_shop' ? 'warning' : 'secondary'}" style="font-size: 10px; padding: 4px 8px;">
+                                        <field name="current_status"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_transitops_vehicle_form" model="ir.ui.view">
+        <field name="name">transitops.vehicle.form</field>
+        <field name="model">transitops.vehicle</field>
+        <field name="arch" type="xml">
+            <form string="Vehicle File">
+                <header>
+                    <field name="current_status" widget="statusbar" statusbar_visible="available,on_trip,in_shop,retired" options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                    <!-- Header Info -->
+                    <div class="oe_button_box" name="button_box"/>
+                    <field name="vehicle_image" widget="image" class="oe_avatar" options="{'zoom': true, 'preview_image': 'vehicle_image'}"/>
+                    
+                    <div class="oe_title">
+                        <label for="registration_number" string="Registration Number" class="oe_edit_only"/>
+                        <h1>
+                            <field name="registration_number" placeholder="e.g. TX-984-KLM"/>
+                        </h1>
+                        <div class="o_row" style="margin-top: 4px;">
+                            <field name="manufacturer" placeholder="Manufacturer (e.g. Peterbilt)"/>
+                            <field name="model" placeholder="Model (e.g. 579)"/>
+                        </div>
+                    </div>
+
+                    <group style="margin-top: 20px;">
+                        <group name="specs" string="Technical Specifications">
+                            <field name="vehicle_type"/>
+                            <field name="capacity"/>
+                            <field name="fuel_type"/>
+                            <field name="fuel_tank_capacity"/>
+                            <field name="current_odometer"/>
+                            <field name="depot"/>
+                        </group>
+                        <group name="assignment" string="Assignment &amp; Operations">
+                            <field name="assigned_driver_id" domain="[('status', '=', 'available')]"/>
+                            <label for="health_score" string="Vehicle Health Score"/>
+                            <div class="o_row">
+                                <field name="health_score" widget="integer" readonly="1" class="oe_inline"/>
+                                <span class="badge rounded-pill bg-info" style="font-size: 11px;">Calculated Live</span>
+                            </div>
+                            <field name="last_service_date"/>
+                            <field name="insurance_expiry"/>
+                            <field name="fitness_expiry"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page name="metrics" string="Performance Analytics">
+                            <group>
+                                <group name="financials" string="Telemetry &amp; Financials">
+                                    <field name="acquisition_cost"/>
+                                    <field name="vehicle_roi" widget="float" readonly="1"/>
+                                </group>
+                                <group name="stats" string="Operating Summaries">
+                                    <field name="total_trips" readonly="1"/>
+                                    <field name="total_fuel_cost" widget="monetary" readonly="1"/>
+                                    <field name="total_maintenance_cost" widget="monetary" readonly="1"/>
+                                    <field name="fuel_efficiency" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="passport" string="QR Passport &amp; Documentation">
+                            <group>
+                                <group string="Documents Upload">
+                                    <field name="rc_document_name" invisible="1"/>
+                                    <field name="rc_document" filename="rc_document_name" widget="binary"/>
+                                </group>
+                                <group string="Digital Passport Link" style="text-align: center;">
+                                    <field name="qr_code" widget="html" readonly="1" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_transitops_vehicle_search" model="ir.ui.view">
+        <field name="name">transitops.vehicle.search</field>
+        <field name="model">transitops.vehicle</field>
+        <field name="arch" type="xml">
+            <search string="Search Vehicles">
+                <field name="registration_number"/>
+                <field name="manufacturer"/>
+                <field name="model"/>
+                <field name="depot"/>
+                <filter name="available" string="Available" domain="[('current_status', '=', 'available')]"/>
+                <filter name="on_trip" string="On Trip" domain="[('current_status', '=', 'on_trip')]"/>
+                <filter name="in_shop" string="In Maintenance" domain="[('current_status', '=', 'in_shop')]"/>
+                <filter name="retired" string="Retired" domain="[('current_status', '=', 'retired')]"/>
+                <separator/>
+                <filter name="electric" string="Electric Fleet" domain="[('fuel_type', '=', 'electric')]"/>
+                <filter name="high_health" string="Healthy Fleet (>80)" domain="[('health_score', '&gt;=', 80)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_depot" string="Depot" context="{'group_by': 'depot'}"/>
+                    <filter name="group_by_status" string="Status" context="{'group_by': 'current_status'}"/>
+                    <filter name="group_by_type" string="Vehicle Type" context="{'group_by': 'vehicle_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_transitops_vehicle" model="ir.actions.act_window">
+        <field name="name">Fleet Vehicles</field>
+        <field name="res_model">transitops.vehicle</field>
+        <field name="view_mode">kanban,list,form,search</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add your first fleet vehicle!
+            </p>
+            <p>
+                Configure logistics trucks, delivery vans, and heavy-duty vehicles with health indices, telemetry, and live status.
+            </p>
+        </field>
+    </record>
+</odoo>

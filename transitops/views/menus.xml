@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Custom OWL Dashboard Client Action -->
+    <record id="action_transitops_dashboard" model="ir.actions.client">
+        <field name="name">Command Center</field>
+        <field name="tag">transitops.dashboard</field>
+    </record>
+
+    <!-- Root Menu -->
+    <menuitem id="menu_transitops_root" 
+              name="TransitOps" 
+              web_icon="transitops,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- Dashboard Menu -->
+    <menuitem id="menu_transitops_dashboard"
+              name="Command Center"
+              parent="menu_transitops_root"
+              action="action_transitops_dashboard"
+              sequence="1"/>
+
+    <!-- Logistics/Trips Menu -->
+    <menuitem id="menu_transitops_trips"
+              name="Operations &amp; Dispatch"
+              parent="menu_transitops_root"
+              action="action_transitops_trip"
+              sequence="2"/>
+
+    <!-- Fleet Menu -->
+    <menuitem id="menu_transitops_fleet"
+              name="Fleet &amp; Crew"
+              parent="menu_transitops_root"
+              sequence="3"/>
+
+    <menuitem id="menu_transitops_fleet_vehicles"
+              name="Vehicles"
+              parent="menu_transitops_fleet"
+              action="action_transitops_vehicle"
+              sequence="10"/>
+
+    <menuitem id="menu_transitops_fleet_drivers"
+              name="Drivers"
+              parent="menu_transitops_fleet"
+              action="action_transitops_driver"
+              sequence="20"/>
+
+    <!-- Maintenance Menu -->
+    <menuitem id="menu_transitops_maintenance_root"
+              name="Maintenance"
+              parent="menu_transitops_root"
+              action="action_transitops_maintenance"
+              sequence="4"/>
+
+    <!-- Financials Menu -->
+    <menuitem id="menu_transitops_financials"
+              name="Fuel &amp; Expenses"
+              parent="menu_transitops_root"
+              sequence="5"/>
+
+    <menuitem id="menu_transitops_financials_fuel"
+              name="Fuel Logs"
+              parent="menu_transitops_financials"
+              action="action_transitops_fuel_log"
+              sequence="10"/>
+
+    <menuitem id="menu_transitops_financials_expenses"
+              name="Operating Expenses"
+              parent="menu_transitops_financials"
+              action="action_transitops_expense"
+              sequence="20"/>
+
+    <!-- Alerts Menu -->
+    <menuitem id="menu_transitops_notifications"
+              name="Alerts Hub"
+              parent="menu_transitops_root"
+              action="action_transitops_notification"
+              sequence="6"/>
+</odoo>

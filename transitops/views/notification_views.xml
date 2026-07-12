@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_transitops_notification_tree" model="ir.ui.view">
+        <field name="name">transitops.notification.tree</field>
+        <field name="model">transitops.notification</field>
+        <field name="arch" type="xml">
+            <list string="Operational Alerts" decoration-danger="alert_type == 'danger'" decoration-warning="alert_type == 'warning'" decoration-success="alert_type == 'success'" decoration-muted="is_read == True">
+                <field name="timestamp" decoration-bf="1"/>
+                <field name="title"/>
+                <field name="message"/>
+                <field name="alert_type" widget="badge"/>
+                <field name="is_read"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_transitops_notification_form" model="ir.ui.view">
+        <field name="name">transitops.notification.form</field>
+        <field name="model">transitops.notification</field>
+        <field name="arch" type="xml">
+            <form string="Operational Notification">
+                <sheet>
+                    <group>
+                        <group name="meta" string="Notification Header">
+                            <field name="title" readonly="1"/>
+                            <field name="alert_type" readonly="1"/>
+                            <field name="timestamp" readonly="1"/>
+                        </group>
+                        <group name="link" string="Linked Objects">
+                            <field name="vehicle_id" readonly="1"/>
+                            <field name="driver_id" readonly="1"/>
+                            <field name="is_read"/>
+                        </group>
+                    </group>
+                    <group string="Alert Details">
+                        <field name="message" readonly="1" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_transitops_notification" model="ir.actions.act_window">
+        <field name="name">Alert Center</field>
+        <field name="res_model">transitops.notification</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No alerts at this moment.
+            </p>
+            <p>
+                Real-time alerts, critical dispatch compliance messages, and document expiry flags will appear here.
+            </p>
+        </field>
+    </record>
+</odoo>

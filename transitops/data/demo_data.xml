@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Drivers -->
+        <record id="demo_driver_1" model="transitops.driver">
+            <field name="name">Marcus Aurelius Vance</field>
+            <field name="license_number">CDL-TX98412</field>
+            <field name="license_category">cdl_a</field>
+            <field name="license_expiry">2028-06-15</field>
+            <field name="phone">+1 (555) 192-3841</field>
+            <field name="email">m.vance@transitops-fleet.com</field>
+            <field name="experience">12</field>
+            <field name="safety_score">99</field>
+            <field name="status">available</field>
+            <field name="emergency_contact">Decimus Vance (+1 555-192-3842)</field>
+        </record>
+
+        <record id="demo_driver_2" model="transitops.driver">
+            <field name="name">Sarah Evelyn Jenkins</field>
+            <field name="license_number">CDL-CA81729</field>
+            <field name="license_category">cdl_a</field>
+            <field name="license_expiry">2027-11-20</field>
+            <field name="phone">+1 (555) 723-9018</field>
+            <field name="email">s.jenkins@transitops-fleet.com</field>
+            <field name="experience">6</field>
+            <field name="safety_score">85</field>
+            <field name="status">available</field>
+            <field name="emergency_contact">Robert Jenkins (+1 555-723-9019)</field>
+        </record>
+
+        <record id="demo_driver_3" model="transitops.driver">
+            <field name="name">Devon James Carter</field>
+            <field name="license_number">CDL-NY40921</field>
+            <field name="license_category">cdl_b</field>
+            <field name="license_expiry">2028-02-10</field>
+            <field name="phone">+1 (555) 441-8920</field>
+            <field name="email">d.carter@transitops-fleet.com</field>
+            <field name="experience">4</field>
+            <field name="safety_score">92</field>
+            <field name="status">available</field>
+            <field name="emergency_contact">Clarissa Carter (+1 555-441-8921)</field>
+        </record>
+
+        <record id="demo_driver_4" model="transitops.driver">
+            <field name="name">Amara Nneka Okafor</field>
+            <field name="license_number">CDL-FL00234</field>
+            <field name="license_category">cdl_a</field>
+            <field name="license_expiry">2026-08-01</field> <!-- Warning upcoming! -->
+            <field name="phone">+1 (555) 309-8871</field>
+            <field name="email">a.okafor@transitops-fleet.com</field>
+            <field name="experience">15</field>
+            <field name="safety_score">97</field>
+            <field name="status">available</field>
+            <field name="emergency_contact">Chidi Okafor (+1 555-309-8872)</field>
+        </record>
+
+
+        <!-- Vehicles -->
+        <record id="demo_vehicle_1" model="transitops.vehicle">
+            <field name="registration_number">TX-HERO-001</field>
+            <field name="model">579 Premium Hauler</field>
+            <field name="manufacturer">Peterbilt</field>
+            <field name="vehicle_type">semi_truck</field>
+            <field name="capacity">36000.0</field>
+            <field name="current_odometer">18450.0</field>
+            <field name="acquisition_cost">145000.0</field>
+            <field name="purchase_date">2024-05-10</field>
+            <field name="current_status">available</field>
+            <field name="fuel_type">diesel</field>
+            <field name="fuel_tank_capacity">450.0</field>
+            <field name="assigned_driver_id" ref="demo_driver_1"/>
+            <field name="last_service_date">2026-05-15</field>
+            <field name="insurance_expiry">2027-05-10</field>
+            <field name="fitness_expiry">2027-05-10</field>
+            <field name="depot">depot_north</field>
+        </record>
+
+        <record id="demo_vehicle_2" model="transitops.vehicle">
+            <field name="registration_number">CA-VOLV-882</field>
+            <field name="model">VNL 860 sleeper</field>
+            <field name="manufacturer">Volvo</field>
+            <field name="vehicle_type">semi_truck</field>
+            <field name="capacity">38000.0</field>
+            <field name="current_odometer">120400.0</field>
+            <field name="acquisition_cost">165000.0</field>
+            <field name="purchase_date">2023-01-15</field>
+            <field name="current_status">available</field>
+            <field name="fuel_type">diesel</field>
+            <field name="fuel_tank_capacity">500.0</field>
+            <field name="assigned_driver_id" ref="demo_driver_2"/>
+            <field name="last_service_date">2026-04-20</field>
+            <field name="insurance_expiry">2027-01-15</field>
+            <field name="fitness_expiry">2027-01-15</field>
+            <field name="depot">depot_east</field>
+        </record>
+
+        <record id="demo_vehicle_3" model="transitops.vehicle">
+            <field name="registration_number">NY-ELEC-409</field>
+            <field name="model">e-Deliver 9 cargo</field>
+            <field name="manufacturer">Maxus</field>
+            <field name="vehicle_type">electric_van</field>
+            <field name="capacity">4800.0</field>
+            <field name="current_odometer">8500.0</field>
+            <field name="acquisition_cost">68000.0</field>
+            <field name="purchase_date">2025-09-01</field>
+            <field name="current_status">available</field>
+            <field name="fuel_type">electric</field>
+            <field name="fuel_tank_capacity">88.0</field> <!-- kWh -->
+            <field name="assigned_driver_id" ref="demo_driver_3"/>
+            <field name="last_service_date">2026-06-10</field>
+            <field name="insurance_expiry">2026-09-01</field>
+            <field name="fitness_expiry">2026-09-01</field>
+            <field name="depot">depot_south</field>
+        </record>
+
+        <record id="demo_vehicle_4" model="transitops.vehicle">
+            <field name="registration_number">FL-CASC-912</field>
+            <field name="model">Cascadia Highway</field>
+            <field name="manufacturer">Freightliner</field>
+            <field name="vehicle_type">semi_truck</field>
+            <field name="capacity">35000.0</field>
+            <field name="current_odometer">245000.0</field>
+            <field name="acquisition_cost">138000.0</field>
+            <field name="purchase_date">2022-06-20</field>
+            <field name="current_status">available</field> <!-- will be modified by maintenance demo below -->
+            <field name="fuel_type">diesel</field>
+            <field name="fuel_tank_capacity">400.0</field>
+            <field name="assigned_driver_id" ref="demo_driver_4"/>
+            <field name="last_service_date">2025-10-15</field>
+            <field name="insurance_expiry">2027-06-20</field>
+            <field name="fitness_expiry">2027-06-20</field>
+            <field name="depot">depot_west</field>
+        </record>
+
+
+        <!-- Trips -->
+        <record id="demo_trip_1" model="transitops.trip">
+            <field name="source">North Terminal Hub (Dallas)</field>
+            <field name="destination">South Logistics Depot (Houston)</field>
+            <field name="vehicle_id" ref="demo_vehicle_1"/>
+            <field name="driver_id" ref="demo_driver_1"/>
+            <field name="cargo_weight">18000.0</field>
+            <field name="cargo_type">general</field>
+            <field name="distance">380.0</field>
+            <field name="actual_fuel">92.0</field>
+            <field name="actual_cost">220.0</field>
+            <field name="revenue">380.0</field>
+            <field name="trip_status">completed</field>
+            <field name="priority">medium</field>
+        </record>
+
+        <record id="demo_trip_2" model="transitops.trip">
+            <field name="source">East Express Gateway (NY)</field>
+            <field name="destination">West Coast Hub (LA)</field>
+            <field name="vehicle_id" ref="demo_vehicle_2"/>
+            <field name="driver_id" ref="demo_driver_2"/>
+            <field name="cargo_weight">24000.0</field>
+            <field name="cargo_type">hazmat</field>
+            <field name="distance">4500.0</field>
+            <field name="actual_fuel">1200.0</field>
+            <field name="actual_cost">3100.0</field>
+            <field name="revenue">5200.0</field>
+            <field name="trip_status">completed</field>
+            <field name="priority">high</field>
+        </record>
+
+        <record id="demo_trip_active_1" model="transitops.trip">
+            <field name="source">North Terminal Hub (Dallas)</field>
+            <field name="destination">East Express Gateway (NY)</field>
+            <field name="vehicle_id" ref="demo_vehicle_1"/>
+            <field name="driver_id" ref="demo_driver_1"/>
+            <field name="cargo_weight">14000.0</field>
+            <field name="cargo_type">valuable</field>
+            <field name="distance">2200.0</field>
+            <field name="trip_status">dispatched</field> <!-- Changes vehicle & driver status to 'on_trip'! -->
+            <field name="priority">critical</field>
+        </record>
+
+
+        <!-- Fuel logs -->
+        <record id="demo_fuel_1" model="transitops.fuel.log">
+            <field name="vehicle_id" ref="demo_vehicle_1"/>
+            <field name="trip_id" ref="demo_trip_1"/>
+            <field name="fuel_added">90.0</field>
+            <field name="cost">135.0</field>
+            <field name="current_odometer">18000.0</field>
+            <field name="fuel_station">Love's Travel Stop #42</field>
+        </record>
+
+        <record id="demo_fuel_2" model="transitops.fuel.log">
+            <field name="vehicle_id" ref="demo_vehicle_1"/>
+            <field name="fuel_added">95.0</field>
+            <field name="cost">142.50</field>
+            <field name="current_odometer">18450.0</field>
+            <field name="fuel_station">Pilot Travel Center #108</field>
+        </record>
+
+
+        <!-- Operational Expenses -->
+        <record id="demo_expense_1" model="transitops.expense">
+            <field name="vehicle_id" ref="demo_vehicle_1"/>
+            <field name="trip_id" ref="demo_trip_1"/>
+            <field name="expense_type">toll</field>
+            <field name="amount">42.50</field>
+            <field name="description">I-45 Express Tollway charges</field>
+            <field name="date">2026-07-10</field>
+        </record>
+
+        <record id="demo_expense_2" model="transitops.expense">
+            <field name="vehicle_id" ref="demo_vehicle_2"/>
+            <field name="trip_id" ref="demo_trip_2"/>
+            <field name="expense_type">permit</field>
+            <field name="amount">250.00</field>
+            <field name="description">Hazmat interstate transit clearance permits</field>
+            <field name="date">2026-07-08</field>
+        </record>
+
+
+        <!-- Maintenance Log (Puts vehicle Cascadia in maintenance / shop) -->
+        <record id="demo_maintenance_active" model="transitops.maintenance">
+            <field name="vehicle_id" ref="demo_vehicle_4"/>
+            <field name="issue">Brake Pad Exhaustion &amp; Air Line Leaks</field>
+            <field name="priority">critical</field>
+            <field name="maintenance_type">breakdown</field>
+            <field name="description">Driver reported soft brake pedal and air pressure drops during pre-trip inspection.</field>
+            <field name="cost">850.00</field>
+            <field name="opened_date">2026-07-12</field>
+            <field name="mechanic">Apex Truck &amp; Trailer Services</field>
+            <field name="status">opened</field> <!-- This will move FL-CASC-912 current_status to 'in_shop' immediately! -->
+        </record>
+
+    </data>
+</odoo>

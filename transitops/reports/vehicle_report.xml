@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_vehicle_passport_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b;">
+                        <!-- Report Banner -->
+                        <div style="border-bottom: 3px solid #0ea5e9; padding-bottom: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="font-size: 10px; font-weight: 800; color: #0ea5e9; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 2px;">TransitOps Operations Registry</span>
+                                <h1 style="margin: 0; font-size: 26px; font-weight: 700; color: #0f172a;">VEHICLE DIGITAL PASSPORT</h1>
+                            </div>
+                            <div style="background-color: #f1f5f9; border-radius: 8px; padding: 6px 16px; border: 1px solid #cbd5e1; text-align: right;">
+                                <span style="font-size: 10px; font-weight: 600; color: #64748b; display: block; text-transform: uppercase;">Registration</span>
+                                <span style="font-size: 16px; font-weight: 700; color: #0ea5e9;"><t t-esc="o.registration_number"/></span>
+                            </div>
+                        </div>
+
+                        <!-- Main Core Info Blocks -->
+                        <div style="display: flex; gap: 24px; margin-bottom: 30px;">
+                            <!-- Specifications -->
+                            <div style="flex: 2; background-color: #f8fafc; border-radius: 12px; padding: 18px; border: 1px solid #e2e8f0;">
+                                <h3 style="margin-top: 0; margin-bottom: 14px; font-size: 14px; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; text-transform: uppercase;">Technical Specifications</h3>
+                                <table style="width: 100%; border-collapse: collapse; font-size: 12px; line-height: 2;">
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b; width: 45%;">Manufacturer:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.manufacturer"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Model:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.model"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Vehicle Type:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.vehicle_type"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Cargo Capacity (kg):</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.capacity"/> kg</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Fuel Type:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.fuel_type"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Fuel Tank Capacity:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.fuel_tank_capacity"/> L/kWh</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Current Odometer:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.current_odometer"/> km</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- Operating Status -->
+                            <div style="flex: 2; background-color: #f8fafc; border-radius: 12px; padding: 18px; border: 1px solid #e2e8f0;">
+                                <h3 style="margin-top: 0; margin-bottom: 14px; font-size: 14px; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; text-transform: uppercase;">Telemetry &amp; Compliance</h3>
+                                <table style="width: 100%; border-collapse: collapse; font-size: 12px; line-height: 2;">
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b; width: 45%;">Operating Depot:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.depot"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Assigned Driver:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.assigned_driver_id.name or 'Unassigned'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Health Score:</td>
+                                        <td style="font-weight: 700; color: #10b981;"><t t-esc="o.health_score"/> / 100</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Last Serviced:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.last_service_date or 'No service log'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Insurance Expiry:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.insurance_expiry"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600; color: #64748b;">Fitness Certificate:</td>
+                                        <td style="color: #0f172a;"><t t-esc="o.fitness_expiry"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- Passport QR -->
+                            <div style="flex: 1; text-align: center; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <t t-out="o.qr_code"/>
+                            </div>
+                        </div>
+
+                        <!-- Financials / Utilization Summary -->
+                        <div style="margin-bottom: 30px;">
+                            <h3 style="font-size: 14px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; text-transform: uppercase;">Financial &amp; Performance Indexes</h3>
+                            <div style="display: flex; justify-content: space-between; gap: 16px; margin-top: 10px; text-align: center;">
+                                <div style="flex: 1; background-color: #f1f5f9; padding: 12px; border-radius: 8px;">
+                                    <span style="font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase; display: block;">Total Shipments</span>
+                                    <span style="font-size: 18px; font-weight: 700; color: #0f172a;"><t t-esc="o.total_trips"/></span>
+                                </div>
+                                <div style="flex: 1; background-color: #f1f5f9; padding: 12px; border-radius: 8px;">
+                                    <span style="font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase; display: block;">Total Fuel Cost</span>
+                                    <span style="font-size: 18px; font-weight: 700; color: #0f172a;">$<t t-esc="o.total_fuel_cost" t-options="{'widget': 'float', 'precision': 2}"/></span>
+                                </div>
+                                <div style="flex: 1; background-color: #f1f5f9; padding: 12px; border-radius: 8px;">
+                                    <span style="font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase; display: block;">Maintenance Spent</span>
+                                    <span style="font-size: 18px; font-weight: 700; color: #0f172a;">$<t t-esc="o.total_maintenance_cost" t-options="{'widget': 'float', 'precision': 2}"/></span>
+                                </div>
+                                <div style="flex: 1; background-color: #f1f5f9; padding: 12px; border-radius: 8px;">
+                                    <span style="font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase; display: block;">Computed Vehicle ROI</span>
+                                    <span style="font-size: 18px; font-weight: 700; color: #10b981;"><t t-esc="o.vehicle_roi" t-options="{'widget': 'float', 'precision': 1}"/>%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Maintenance History -->
+                        <div style="margin-bottom: 30px;">
+                            <h3 style="font-size: 14px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; text-transform: uppercase;">Recent Maintenance Events</h3>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; text-align: left;">
+                                <thead>
+                                    <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                                        <th style="padding: 6px;">Date</th>
+                                        <th style="padding: 6px;">Diagnosis Issue</th>
+                                        <th style="padding: 6px;">Type</th>
+                                        <th style="padding: 6px;">Mechanic</th>
+                                        <th style="padding: 6px; text-align: right;">Cost ($)</th>
+                                        <th style="padding: 6px; text-align: right;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="maintenances" t-value="request.env['transitops.maintenance'].search([('vehicle_id', '=', o.id)], limit=5)"/>
+                                    <t t-foreach="maintenances" t-as="m">
+                                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                                            <td style="padding: 6px;"><t t-esc="m.opened_date"/></td>
+                                            <td style="padding: 6px; font-weight: 600;"><t t-esc="m.issue"/></td>
+                                            <td style="padding: 6px;"><t t-esc="m.maintenance_type"/></td>
+                                            <td style="padding: 6px;"><t t-esc="m.mechanic or 'Vendor'"/></td>
+                                            <td style="padding: 6px; text-align: right;">$<t t-esc="m.cost" t-options="{'widget': 'float', 'precision': 2}"/></td>
+                                            <td style="padding: 6px; text-align: right;"><t t-esc="m.status.upper()"/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="not maintenances">
+                                        <tr>
+                                            <td colspan="6" style="padding: 10px; text-align: center; color: #64748b;">No maintenance events logged for this unit.</td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

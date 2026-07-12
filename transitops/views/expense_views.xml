@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_transitops_expense_tree" model="ir.ui.view">
+        <field name="name">transitops.expense.tree</field>
+        <field name="model">transitops.expense</field>
+        <field name="arch" type="xml">
+            <list string="Operational Expenses" editable="bottom">
+                <field name="date"/>
+                <field name="vehicle_id"/>
+                <field name="trip_id" domain="[('vehicle_id', '=', vehicle_id)]"/>
+                <field name="expense_type" widget="badge"/>
+                <field name="description"/>
+                <field name="amount" widget="monetary" sum="Total Operational Spend"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_transitops_expense_form" model="ir.ui.view">
+        <field name="name">transitops.expense.form</field>
+        <field name="model">transitops.expense</field>
+        <field name="arch" type="xml">
+            <form string="Operational Expense">
+                <sheet>
+                    <group>
+                        <group name="main" string="Expense Info">
+                            <field name="vehicle_id"/>
+                            <field name="trip_id" domain="[('vehicle_id', '=', vehicle_id)]"/>
+                            <field name="expense_type"/>
+                            <field name="date"/>
+                        </group>
+                        <group name="amount" string="Value">
+                            <field name="amount"/>
+                        </group>
+                    </group>
+                    <group string="Expense Notes">
+                        <field name="description" placeholder="Specify expense receipts or remarks..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_transitops_expense" model="ir.actions.act_window">
+        <field name="name">Operating Expenses</field>
+        <field name="res_model">transitops.expense</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register a logistics expense!
+            </p>
+            <p>
+                Track supplementary operational expenses including highway tolls, driver meals, loading fees, and compliance fines.
+            </p>
+        </field>
+    </record>
+</odoo>

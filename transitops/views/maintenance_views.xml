@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_transitops_maintenance_tree" model="ir.ui.view">
+        <field name="name">transitops.maintenance.tree</field>
+        <field name="model">transitops.maintenance</field>
+        <field name="arch" type="xml">
+            <list string="Maintenance Logs" decoration-danger="priority == 'critical'" decoration-warning="status in ('opened','in_progress')" decoration-success="status == 'completed'">
+                <field name="vehicle_id"/>
+                <field name="issue"/>
+                <field name="maintenance_type"/>
+                <field name="priority" widget="badge" decoration-danger="priority == 'critical'" decoration-warning="priority == 'high'" decoration-info="priority == 'medium'"/>
+                <field name="opened_date"/>
+                <field name="closed_date"/>
+                <field name="mechanic"/>
+                <field name="cost" sum="Total Maintenance Cost"/>
+                <field name="status" widget="badge" decoration-warning="status == 'in_progress'" decoration-info="status == 'opened'" decoration-success="status == 'completed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_transitops_maintenance_form" model="ir.ui.view">
+        <field name="name">transitops.maintenance.form</field>
+        <field name="model">transitops.maintenance</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance Entry">
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="opened,in_progress,completed,cancelled" options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="issue" class="oe_edit_only" string="Maintenance Issue / Diagnosis"/>
+                        <h1>
+                            <field name="issue" placeholder="e.g. Engine Overheating / Brake Pad Change"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="vehicle_maint" string="Vehicle &amp; Priority">
+                            <field name="vehicle_id"/>
+                            <field name="maintenance_type"/>
+                            <field name="priority"/>
+                        </group>
+                        <group name="details" string="Schedule &amp; Cost">
+                            <field name="opened_date"/>
+                            <field name="closed_date"/>
+                            <field name="mechanic"/>
+                            <field name="cost"/>
+                        </group>
+                    </group>
+                    <group string="Problem Diagnostics &amp; Servicing Remarks">
+                        <field name="description" nolabel="1" placeholder="Write full breakdown or repair descriptions here..."/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_transitops_maintenance" model="ir.actions.act_window">
+        <field name="name">Maintenance Center</field>
+        <field name="res_model">transitops.maintenance</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register a maintenance event!
+            </p>
+            <p>
+                Open repairs automatically change the vehicle status to "In Shop" to disable dispatches, and return them to service when resolved.
+            </p>
+        </field>
+    </record>
+</odoo>

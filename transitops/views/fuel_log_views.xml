@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_transitops_fuel_log_tree" model="ir.ui.view">
+        <field name="name">transitops.fuel.log.tree</field>
+        <field name="model">transitops.fuel.log</field>
+        <field name="arch" type="xml">
+            <list string="Fuel Logs" editable="bottom">
+                <field name="vehicle_id"/>
+                <field name="trip_id" domain="[('vehicle_id', '=', vehicle_id)]"/>
+                <field name="current_odometer"/>
+                <field name="fuel_added" sum="Total Fuel Volume"/>
+                <field name="cost" widget="monetary" sum="Total Fuel Spend"/>
+                <field name="mileage" readonly="1"/>
+                <field name="fuel_station"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View (Optional but good fallback) -->
+    <record id="view_transitops_fuel_log_form" model="ir.ui.view">
+        <field name="name">transitops.fuel.log.form</field>
+        <field name="model">transitops.fuel.log</field>
+        <field name="arch" type="xml">
+            <form string="Fuel Log Entry">
+                <sheet>
+                    <group>
+                        <group name="main" string="Fuel Refill Details">
+                            <field name="vehicle_id"/>
+                            <field name="trip_id" domain="[('vehicle_id', '=', vehicle_id)]"/>
+                            <field name="fuel_station"/>
+                        </group>
+                        <group name="calc" string="Odometer &amp; Telemetry">
+                            <field name="current_odometer"/>
+                            <field name="fuel_added"/>
+                            <field name="cost"/>
+                            <field name="mileage" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_transitops_fuel_log" model="ir.actions.act_window">
+        <field name="name">Fuel Management</field>
+        <field name="res_model">transitops.fuel.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a fuel fill record!
+            </p>
+            <p>
+                Log details of fuel additions to compute historical fleet MPG and vehicle operational cost profiles.
+            </p>
+        </field>
+    </record>
+</odoo>

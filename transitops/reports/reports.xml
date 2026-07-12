@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vehicle Passport PDF Action -->
+    <record id="action_report_vehicle_passport" model="ir.actions.report">
+        <field name="name">Vehicle Passport</field>
+        <field name="model">transitops.vehicle</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">transitops.report_vehicle_passport_template</field>
+        <field name="report_file">transitops.report_vehicle_passport_template</field>
+        <field name="binding_model_id" ref="model_transitops_vehicle"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Trip Summary PDF Action -->
+    <record id="action_report_trip_summary" model="ir.actions.report">
+        <field name="name">Trip Summary Sheet</field>
+        <field name="model">transitops.trip</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">transitops.report_trip_summary_template</field>
+        <field name="report_file">transitops.report_trip_summary_template</field>
+        <field name="binding_model_id" ref="model_transitops_trip"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

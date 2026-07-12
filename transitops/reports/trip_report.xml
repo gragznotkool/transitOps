@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_trip_summary_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b;">
+                        <!-- Report Header -->
+                        <div style="border-bottom: 3px solid #10b981; padding-bottom: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="font-size: 10px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 2px;">TransitOps Shipment Telemetry</span>
+                                <h1 style="margin: 0; font-size: 26px; font-weight: 700; color: #0f172a;">SHIPMENT SUMMARY REPORT</h1>
+                            </div>
+                            <div style="background-color: #f1f5f9; border-radius: 8px; padding: 6px 16px; border: 1px solid #cbd5e1; text-align: right;">
+                                <span style="font-size: 10px; font-weight: 600; color: #64748b; display: block; text-transform: uppercase;">Trip ID</span>
+                                <span style="font-size: 16px; font-weight: 700; color: #10b981;"><t t-esc="o.trip_number"/></span>
+                            </div>
+                        </div>
+
+                        <!-- Route & Cargo Details -->
+                        <div style="background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; padding: 18px; margin-bottom: 24px;">
+                            <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Route Details</h3>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 12px;">
+                                <div style="text-align: left; flex: 1;">
+                                    <span style="font-size: 10px; color: #64748b; display: block; text-transform: uppercase;">Origin</span>
+                                    <strong style="font-size: 16px; color: #0f172a;"><t t-esc="o.source"/></strong>
+                                </div>
+                                <div style="text-align: center; flex: 0.5; font-size: 18px; color: #64748b;">
+                                    <span class="fa fa-long-arrow-alt-right"></span>
+                                </div>
+                                <div style="text-align: right; flex: 1;">
+                                    <span style="font-size: 10px; color: #64748b; display: block; text-transform: uppercase;">Destination</span>
+                                    <strong style="font-size: 16px; color: #0f172a;"><t t-esc="o.destination"/></strong>
+                                </div>
+                            </div>
+                            
+                            <!-- Cargo specifics row -->
+                            <div style="display: flex; justify-content: space-between; gap: 16px; text-align: center; font-size: 11px;">
+                                <div style="flex: 1; border-right: 1px solid #e2e8f0;">
+                                    <span style="color: #64748b; display: block;">Distance</span>
+                                    <strong style="color: #0f172a; font-size: 13px;"><t t-esc="o.distance"/> km</strong>
+                                </div>
+                                <div style="flex: 1; border-right: 1px solid #e2e8f0;">
+                                    <span style="color: #64748b; display: block;">Cargo Weight</span>
+                                    <strong style="color: #0f172a; font-size: 13px;"><t t-esc="o.cargo_weight"/> kg</strong>
+                                </div>
+                                <div style="flex: 1; border-right: 1px solid #e2e8f0;">
+                                    <span style="color: #64748b; display: block;">Cargo Category</span>
+                                    <strong style="color: #0f172a; font-size: 13px;"><t t-esc="o.cargo_type.upper().replace('_', ' ')"/></strong>
+                                </div>
+                                <div style="flex: 1;">
+                                    <span style="color: #64748b; display: block;">Priority Level</span>
+                                    <strong style="color: #f43f5e; font-size: 13px;"><t t-esc="o.priority.upper()"/></strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fleet Crew Info -->
+                        <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+                            <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px; background-color: #ffffff;">
+                                <span style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; display: block; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 8px;">Vehicle Registry</span>
+                                <table style="width: 100%; font-size: 11px;">
+                                    <tr><td style="color: #64748b;">Registration:</td><td style="font-weight: 600;"><t t-esc="o.vehicle_id.registration_number"/></td></tr>
+                                    <tr><td style="color: #64748b;">Model:</td><td><t t-esc="o.vehicle_id.manufacturer"/> <t t-esc="o.vehicle_id.model"/></td></tr>
+                                    <tr><td style="color: #64748b;">Type:</td><td><t t-esc="o.vehicle_id.vehicle_type"/></td></tr>
+                                    <tr><td style="color: #64748b;">Fuel Type:</td><td><t t-esc="o.vehicle_id.fuel_type"/></td></tr>
+                                </table>
+                            </div>
+                            <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px; background-color: #ffffff;">
+                                <span style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; display: block; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 8px;">Crew Allocation</span>
+                                <table style="width: 100%; font-size: 11px;">
+                                    <tr><td style="color: #64748b;">Driver Name:</td><td style="font-weight: 600;"><t t-esc="o.driver_id.name"/></td></tr>
+                                    <tr><td style="color: #64748b;">License Code:</td><td><t t-esc="o.driver_id.license_number"/> (<t t-esc="o.driver_id.license_category"/>)</td></tr>
+                                    <tr><td style="color: #64748b;">Safety Score:</td><td><t t-esc="o.driver_id.safety_score"/>%</td></tr>
+                                    <tr><td style="color: #64748b;">Status:</td><td><t t-esc="o.driver_id.status"/></td></tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Telemetry Comparison table -->
+                        <div style="margin-bottom: 30px;">
+                            <h3 style="font-size: 14px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; text-transform: uppercase;">Financial &amp; Telemetry Auditing</h3>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; text-align: left;">
+                                <thead>
+                                    <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                                        <th style="padding: 8px;">Metric Parameter</th>
+                                        <th style="padding: 8px; text-align: right;">Pre-Trip Projection</th>
+                                        <th style="padding: 8px; text-align: right;">Actual Logged Value</th>
+                                        <th style="padding: 8px; text-align: right;">Variance Index</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                                        <td style="padding: 8px; font-weight: 600;">Fuel Consumption</td>
+                                        <td style="padding: 8px; text-align: right;"><t t-esc="o.estimated_fuel" t-options="{'widget': 'float', 'precision': 1}"/> L/kWh</td>
+                                        <td style="padding: 8px; text-align: right;"><t t-esc="o.actual_fuel" t-options="{'widget': 'float', 'precision': 1}"/> L/kWh</td>
+                                        <td style="padding: 8px; text-align: right;">
+                                            <t t-set="fuel_diff" t-value="o.actual_fuel - o.estimated_fuel"/>
+                                            <span t-attf-style="color: #{fuel_diff &gt; 0 ? '#f43f5e' : '#10b981'}; font-weight: bold;">
+                                                <t t-if="fuel_diff &gt; 0">+</t><t t-esc="fuel_diff" t-options="{'widget': 'float', 'precision': 1}"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #cbd5e1;">
+                                        <td style="padding: 8px; font-weight: 600;">Operating Trip Cost</td>
+                                        <td style="padding: 8px; text-align: right;">$<t t-esc="o.estimated_cost" t-options="{'widget': 'float', 'precision': 2}"/></td>
+                                        <td style="padding: 8px; text-align: right;">$<t t-esc="o.actual_cost" t-options="{'widget': 'float', 'precision': 2}"/></td>
+                                        <td style="padding: 8px; text-align: right;">
+                                            <t t-set="cost_diff" t-value="o.actual_cost - o.estimated_cost"/>
+                                            <span t-attf-style="color: #{cost_diff &gt; 0 ? '#f43f5e' : '#10b981'}; font-weight: bold;">
+                                                <t t-if="cost_diff &gt; 0">+</t>$<t t-esc="cost_diff" t-options="{'widget': 'float', 'precision': 2}"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr style="background-color: #f8fafc; font-size: 12px;">
+                                        <td style="padding: 10px; font-weight: 700;" colspan="2">Consolidated Revenue Billing:</td>
+                                        <td style="padding: 10px; text-align: right; font-weight: 700; color: #10b981;" colspan="2">
+                                            $<t t-esc="o.revenue" t-options="{'widget': 'float', 'precision': 2}"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Timeline Audit Log -->
+                        <div>
+                            <h3 style="font-size: 14px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; text-transform: uppercase;">Shipment Timeline Event Audit Log</h3>
+                            <div style="margin-top: 15px; padding-left: 20px; border-left: 2px solid #e2e8f0;">
+                                <t t-foreach="o.timeline_ids" t-as="tl">
+                                    <div style="position: relative; margin-bottom: 16px;">
+                                        <!-- Timeline node circle -->
+                                        <div style="position: absolute; left: -26px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background-color: #10b981; border: 2px solid #ffffff;"></div>
+                                        <div style="font-size: 11px; color: #64748b;">
+                                            <strong><t t-esc="tl.timestamp"/></strong> — 
+                                            <span style="color: #0f172a; font-weight: 600;"><t t-esc="tl.action_status.upper()"/></span> 
+                                            (User: <t t-esc="tl.user_id.name"/>)
+                                        </div>
+                                        <p style="margin: 4px 0 0 0; font-size: 11px; color: #475569; font-style: italic;"><t t-esc="tl.comment"/></p>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

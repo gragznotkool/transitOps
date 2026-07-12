@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Driver License Monitor Cron -->
+        <record id="ir_cron_driver_license_expiry" model="ir.cron">
+            <field name="name">TransitOps: Driver License Expiry Monitor</field>
+            <field name="model_id" ref="model_transitops_driver"/>
+            <field name="state">code</field>
+            <field name="code">model.check_license_expiries()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+        
+        <!-- Vehicle Document Monitor Cron -->
+        <record id="ir_cron_vehicle_doc_expiry" model="ir.cron">
+            <field name="name">TransitOps: Vehicle Paperwork Expiry Monitor</field>
+            <field name="model_id" ref="model_transitops_vehicle"/>
+            <field name="state">code</field>
+            <field name="code">model.check_document_expiries()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Daily Briefing Cron -->
+        <record id="ir_cron_daily_fleet_brief" model="ir.cron">
+            <field name="name">TransitOps: Daily Operations Briefing</field>
+            <field name="model_id" ref="model_transitops_vehicle"/>
+            <field name="state">code</field>
+            <field name="code">model.generate_daily_fleet_summary()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

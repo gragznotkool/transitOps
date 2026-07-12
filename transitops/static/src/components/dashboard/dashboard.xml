@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="transitops.DashboardTemplate" owl="1">
+        <div class="transitops_dashboard_container">
+            <!-- Loading Skeleton -->
+            <t t-if="state.loading">
+                <div class="dashboard_loading">
+                    <div class="spinner"></div>
+                    <p>Loading Logistics Command Center...</p>
+                </div>
+            </t>
+            
+            <t t-else="">
+                <!-- Header Control Panel -->
+                <header class="dashboard_header">
+                    <div class="header_branding">
+                        <span class="fa fa-cubes logo_icon"></span>
+                        <div>
+                            <h1>TRANSITOPS</h1>
+                            <p class="subtitle">Global Fleet Telemetry &amp; Dispatch Optimization</p>
+                        </div>
+                    </div>
+                    
+                    <div class="header_controls">
+                        <!-- Depot Filter -->
+                        <div class="filter_wrapper">
+                            <label class="fa fa-map-marker-alt filter_icon"></label>
+                            <select class="depot_select" t-model="state.selectedDepot">
+                                <option value="all">All Terminals</option>
+                                <option value="depot_north">North Terminal Hub</option>
+                                <option value="depot_south">South Logistics Depot</option>
+                                <option value="depot_east">East Express Gateway</option>
+                                <option value="depot_west">West Coast Hub</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Manual Refresh -->
+                        <button class="btn_refresh" t-on-click="loadData">
+                            <span class="fa fa-sync-alt refresh_icon"></span> Reload Feed
+                        </button>
+                    </div>
+                </header>
+
+                <!-- KPI Cards Row -->
+                <section class="kpi_grid">
+                    <div class="kpi_card glass_effect">
+                        <div class="kpi_icon_wrapper util_icon">
+                            <span class="fa fa-tachometer-alt"></span>
+                        </div>
+                        <div class="kpi_details">
+                            <h3>Fleet Utilization</h3>
+                            <div class="kpi_value_row">
+                                <span class="kpi_number"><t t-esc="getKPIs().utilization"/>%</span>
+                                <span class="kpi_trend positive"><span class="fa fa-arrow-up"></span> 4.2%</span>
+                            </div>
+                            <p class="kpi_caption"><t t-esc="getKPIs().activeCount"/> of <t t-esc="getKPIs().totalCount"/> Vehicles Active</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi_card glass_effect">
+                        <div class="kpi_icon_wrapper trip_icon">
+                            <span class="fa fa-road"></span>
+                        </div>
+                        <div class="kpi_details">
+                            <h3>Live Shipments</h3>
+                            <div class="kpi_value_row">
+                                <span class="kpi_number"><t t-esc="getKPIs().activeCount"/></span>
+                                <span class="kpi_badge_live">In-Transit</span>
+                            </div>
+                            <p class="kpi_caption"><t t-esc="getKPIs().availableCount"/> Units Ready in Depot Pool</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi_card glass_effect">
+                        <div class="kpi_icon_wrapper carbon_icon">
+                            <span class="fa fa-leaf"></span>
+                        </div>
+                        <div class="kpi_details">
+                            <h3>Environmental Offset</h3>
+                            <div class="kpi_value_row">
+                                <span class="kpi_number"><t t-esc="state.carbonMetrics.treesNeeded"/></span>
+                                <span class="kpi_units">Trees</span>
+                            </div>
+                            <p class="kpi_caption">To offset <t t-esc="state.carbonMetrics.co2Tons"/> tons of lifetime CO₂</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi_card glass_effect">
+                        <div class="kpi_icon_wrapper alert_kpi_icon">
+                            <span class="fa fa-tools"></span>
+                        </div>
+                        <div class="kpi_details">
+                            <h3>Maintenance Status</h3>
+                            <div class="kpi_value_row">
+                                <span class="kpi_number"><t t-esc="getKPIs().maintenanceCount"/></span>
+                                <span class="kpi_badge_warn">In Shop</span>
+                            </div>
+                            <p class="kpi_caption">Servicing &amp; preventative repairs logs</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Core Workspace Area -->
+                <div class="dashboard_main_layout">
+                    <!-- Left: Digital Twin Fleet Depot Grid -->
+                    <main class="digital_twin_panel glass_effect">
+                        <div class="panel_header">
+                            <h2><span class="fa fa-network-wired header_icon"></span> Digital Twin Fleet Registry</h2>
+                            <span class="pulse_dot_container"><span class="pulse_dot"></span> LIVE TELEMETRY</span>
+                        </div>
+                        
+                        <div class="depots_container">
+                            <t t-foreach="getDepotGroups()" t-as="depotKey" t-key="depotKey">
+                                <div class="depot_group">
+                                    <h3 class="depot_title">
+                                        <span class="fa fa-warehouse depot_icon"></span>
+                                        <t t-esc="getDepotGroups()[depotKey].name"/>
+                                        <span class="depot_count">(<t t-esc="getDepotGroups()[depotKey].vehicles.length"/> units)</span>
+                                    </h3>
+                                    
+                                    <div class="vehicles_grid">
+                                        <t t-foreach="getDepotGroups()[depotKey].vehicles" t-as="vehicle" t-key="vehicle.id">
+                                            <div t-attf-class="vehicle_card status_#{vehicle.current_status}" t-on-click="() => this.openVehicle(vehicle.id)">
+                                                <!-- Card Header -->
+                                                <div class="veh_card_header">
+                                                    <span class="veh_reg"><t t-esc="vehicle.registration_number"/></span>
+                                                    <span t-attf-class="veh_status_tag bg-#{vehicle.current_status}">
+                                                        <t t-esc="vehicle.current_status.toUpperCase().replace('_', ' ')"/>
+                                                    </span>
+                                                </div>
+                                                
+                                                <!-- Card Body -->
+                                                <div class="veh_card_body">
+                                                    <h4 class="veh_model"><t t-esc="vehicle.manufacturer"/> <t t-esc="vehicle.model"/></h4>
+                                                    
+                                                    <div class="veh_meta_row">
+                                                        <span class="fa fa-user icon"></span>
+                                                        <span class="val"><t t-esc="getDriverName(vehicle.assigned_driver_id)"/></span>
+                                                    </div>
+
+                                                    <div class="veh_meta_row">
+                                                        <span class="fa fa-charging-station icon"></span>
+                                                        <span class="val"><t t-esc="vehicle.fuel_type.toUpperCase()"/> (Eff: <t t-esc="vehicle.fuel_efficiency.toFixed(1)"/> km)</span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Health Score Ring/Bar -->
+                                                <div class="veh_card_footer">
+                                                    <div class="health_indicator">
+                                                        <div class="bar_container">
+                                                            <div class="health_bar" t-attf-style="width: #{vehicle.health_score}%;" 
+                                                                 t-attf-class="level_#{vehicle.health_score &gt;= 80 ? 'good' : vehicle.health_score &gt;= 50 ? 'warn' : 'critical'}"></div>
+                                                        </div>
+                                                        <span class="health_label">Health: <t t-esc="vehicle.health_score"/>%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </main>
+
+                    <!-- Right Sidebar: Alerts Feed & AI Panel -->
+                    <aside class="sidebar_panel">
+                        <!-- AI Insights Card -->
+                        <div class="insights_panel glass_effect">
+                            <div class="panel_header">
+                                <h2><span class="fa fa-brain header_icon ai_icon"></span> AI Insights Engine</h2>
+                            </div>
+                            <div class="insights_list">
+                                <t t-foreach="state.insights" t-as="insight" t-key="insight.text">
+                                    <div t-attf-class="insight_item type_#{insight.type}">
+                                        <span t-attf-class="fa fa-#{insight.type == 'success' ? 'check-circle' : insight.type == 'warning' ? 'exclamation-triangle' : insight.type == 'danger' ? 'radiation' : 'info-circle'} item_icon"></span>
+                                        <p class="insight_text"><t t-esc="insight.text"/></p>
+                                    </div>
+                                </t>
+                                <t t-if="state.insights.length == 0">
+                                    <div class="empty_insights">
+                                        <span class="fa fa-check-double empty_icon"></span>
+                                        <p>All operations are fully optimized. No anomalies logged.</p>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Command Center Live Feed -->
+                        <div class="event_feed_panel glass_effect">
+                            <div class="panel_header">
+                                <h2><span class="fa fa-satellite-dish header_icon text_live"></span> Event Stream</h2>
+                            </div>
+                            <div class="events_container">
+                                <t t-foreach="state.notifications" t-as="notif" t-key="notif.id">
+                                    <div t-attf-class="event_item level_#{notif.alert_type}">
+                                        <div class="event_time">
+                                            <span class="fa fa-clock"></span>
+                                            <t t-esc="notif.timestamp.substring(11, 16)"/>
+                                        </div>
+                                        <h4 class="event_title"><t t-esc="notif.title"/></h4>
+                                        <p class="event_desc"><t t-esc="notif.message"/></p>
+                                    </div>
+                                </t>
+                                <t t-if="state.notifications.length == 0">
+                                    <div class="empty_events">
+                                        <span class="fa fa-comment-slash empty_icon"></span>
+                                        <p>No dispatch notifications triggered today.</p>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+
+                <!-- Utilities Row: Simulator & Driver Rankings -->
+                <div class="utilities_layout">
+                    <!-- Smart Route Simulator & Recommendation -->
+                    <section class="simulator_panel glass_effect">
+                        <div class="panel_header">
+                            <h2><span class="fa fa-calculator header_icon"></span> Route Optimizer &amp; Simulator</h2>
+                        </div>
+                        
+                        <div class="simulator_content">
+                            <!-- Inputs Form -->
+                            <div class="sim_form">
+                                <div class="form_group">
+                                    <label>Haul Distance (km)</label>
+                                    <input type="number" name="simDistance" t-att-value="state.simDistance" t-on-input="onSimInputsChange" class="sim_input"/>
+                                </div>
+                                <div class="form_group">
+                                    <label>Cargo Weight (kg)</label>
+                                    <input type="number" name="simCargoWeight" t-att-value="state.simCargoWeight" t-on-input="onSimInputsChange" class="sim_input"/>
+                                </div>
+                                <div class="form_group">
+                                    <label>Primary Crew Driver</label>
+                                    <select name="simDriver" t-on-change="onSimInputsChange" class="sim_select">
+                                        <t t-foreach="state.drivers" t-as="driver" t-key="driver.id">
+                                            <option t-att-value="driver.id" t-att-selected="driver.id == state.simDriverId">
+                                                <t t-esc="driver.name"/> (Safety: <t t-esc="driver.safety_score"/>%)
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="form_group">
+                                    <label>Active Truck Unit</label>
+                                    <select name="simVehicle" t-on-change="onSimInputsChange" class="sim_select">
+                                        <t t-foreach="state.vehicles" t-as="vehicle" t-key="vehicle.id">
+                                            <option t-att-value="vehicle.id" t-att-selected="vehicle.id == state.simVehicleId">
+                                                <t t-esc="vehicle.registration_number"/> (Health: <t t-esc="vehicle.health_score"/>%)
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Outputs display -->
+                            <div class="sim_output_panel">
+                                <t t-if="state.simResult">
+                                    <div class="simulation_card">
+                                        <h3 class="sim_title">Trip Cost Projections</h3>
+                                        <div class="sim_metrics_grid">
+                                            <div class="sim_val_card">
+                                                <span class="label">Est Fuel (<t t-esc="state.simResult.fuelVolume"/> <t t-esc="state.simResult.fuelType"/>)</span>
+                                                <span class="value">$<t t-esc="state.simResult.fuelCost"/></span>
+                                            </div>
+                                            <div class="sim_val_card">
+                                                <span class="label">Driver Expenses</span>
+                                                <span class="value">$<t t-esc="state.simResult.driverCost"/></span>
+                                            </div>
+                                            <div class="sim_val_card">
+                                                <span class="label">Maint &amp; Road Wear</span>
+                                                <span class="value">$<t t-esc="state.simResult.maintCost"/></span>
+                                            </div>
+                                            <div class="sim_val_card highlighted_total">
+                                                <span class="label">Projected Cost Index</span>
+                                                <span class="value">$<t t-esc="state.simResult.totalCost"/></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                                
+                                <!-- Recommendation engine output -->
+                                <t t-if="state.recommendation">
+                                    <div class="recommendation_card">
+                                        <div class="rec_header">
+                                            <span class="fa fa-award rec_badge_icon"></span>
+                                            <h4>Smart Fleet Allocation</h4>
+                                        </div>
+                                        <p class="rec_desc"><t t-esc="state.recommendation.text"/></p>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Driver Leaderboard -->
+                    <section class="leaderboard_panel glass_effect">
+                        <div class="panel_header">
+                            <h2><span class="fa fa-trophy header_icon score_gold"></span> Driver Performance Leaderboard</h2>
+                        </div>
+                        <div class="leaderboard_list">
+                            <t t-foreach="getLeaderboard()" t-as="driver" t-key="driver.id">
+                                <div class="leaderboard_row" t-on-click="() => this.openDriver(driver.id)">
+                                    <div class="drv_name_cell">
+                                        <span class="drv_rank"><t t-esc="driver_index + 1"/></span>
+                                        <div>
+                                            <h4 class="drv_name"><t t-esc="driver.name"/></h4>
+                                            <p class="drv_detail">Category: CDL-A | Completed <t t-esc="driver.trips_completed"/> shipments</p>
+                                        </div>
+                                    </div>
+                                    <div class="drv_metrics_cell">
+                                        <div class="drv_score_block">
+                                            <span class="label">Safety Score</span>
+                                            <span t-attf-class="value score_#{driver.safety_score &gt;= 90 ? 'high' : driver.safety_score &gt;= 70 ? 'med' : 'low'}">
+                                                <t t-esc="driver.safety_score"/>%
+                                            </span>
+                                        </div>
+                                        
+                                        <!-- Badges based on performance rules -->
+                                        <div class="badge_rack">
+                                            <t t-if="driver.safety_score &gt;= 98">
+                                                <span class="badge badge_safest" title="Perfect safety index">Safest</span>
+                                            </t>
+                                            <t t-if="driver.trips_completed &gt;= 10">
+                                                <span class="badge badge_best" title="Completed 10+ jobs">Best Driver</span>
+                                            </t>
+                                            <t t-if="driver.average_fuel_efficiency &gt;= 7.0">
+                                                <span class="badge badge_eco" title="Excellent fuel index">Eco-Driver</span>
+                                            </t>
+                                            <t t-if="driver.average_delay &lt;= 0.2 &amp;&amp; driver.trips_completed &gt; 0">
+                                                <span class="badge badge_fast" title="Arrives on time consistently">Fast Delivery</span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

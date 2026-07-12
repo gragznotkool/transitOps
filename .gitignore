@@ -1,0 +1,12 @@
+# Odoo core framework
+odoo/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS specific files
+.DS_Store
+Thumbs.db
