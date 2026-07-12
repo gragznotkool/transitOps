@@ -4,6 +4,9 @@ This file is read automatically by every agent spawned in this workspace (Antigr
 
 **If a task requires a decision this file and `.agents/rules/` don't cover — a new endpoint shape, a new table, a new status value, a new dependency — stop and ask the human. Do not invent a convention.** Four people running four separate agent sessions in parallel only merges cleanly if all four agents make the same call on anything ambiguous, and the only way to guarantee that is to not let them decide alone.
 
+## Contributor Note
+
+Small clarifications or workflow updates to this file are welcome when they improve handoffs for the team. Prefer concise, actionable guidance that matches the current project conventions.
 ---
 
 ## Role
