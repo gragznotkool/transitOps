@@ -33,6 +33,26 @@ async def create_trip(db: AsyncSession, company_id: int, trip_in: schemas.TripCr
     if not driver or driver.company_id != company_id:
         raise HTTPException(status_code=404, detail="Driver not found")
         
+    if vehicle.status != VehicleStatus.AVAILABLE:
+        raise HTTPException(
+            status_code=400, 
+            detail={"error": {"code": "VEHICLE_NOT_AVAILABLE", "message": "Vehicle is not available."}}
+        )
+    if driver.status == DriverStatus.SUSPENDED:
+        raise HTTPException(
+            status_code=400, 
+            detail={"error": {"code": "DRIVER_SUSPENDED", "message": "Driver is suspended."}}
+        )
+    if driver.status != DriverStatus.AVAILABLE:
+        raise HTTPException(
+            status_code=400, 
+            detail={"error": {"code": "DRIVER_NOT_AVAILABLE", "message": "Driver is not available."}}
+        )
+    if driver.license_expiry_date <= date.today():
+        raise HTTPException(
+            status_code=400, 
+            detail={"error": {"code": "LICENSE_EXPIRED", "message": "Driver's license has expired."}}
+        )
     if vehicle.max_load_capacity_kg < trip_in.cargo_weight_kg:
         raise HTTPException(
             status_code=400, 
@@ -43,6 +63,10 @@ async def create_trip(db: AsyncSession, company_id: int, trip_in: schemas.TripCr
     db.add(db_trip)
     await db.commit()
     await db.refresh(db_trip)
+    
+    from app.modules.dashboard.service import invalidate_dashboard_cache
+    await invalidate_dashboard_cache(company_id)
+    
     return db_trip
 
 async def dispatch_trip(db: AsyncSession, company_id: int, trip_id: int) -> Trip:
@@ -83,6 +107,10 @@ async def dispatch_trip(db: AsyncSession, company_id: int, trip_id: int) -> Trip
     
     await db.commit()
     await db.refresh(trip)
+    
+    from app.modules.dashboard.service import invalidate_dashboard_cache
+    await invalidate_dashboard_cache(company_id)
+    
     return trip
 
 async def complete_trip(db: AsyncSession, company_id: int, trip_id: int, data: schemas.TripComplete) -> Trip:

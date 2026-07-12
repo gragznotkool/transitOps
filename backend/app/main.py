@@ -9,8 +9,19 @@ from app.modules.drivers.router import router as drivers_router
 from app.modules.trips.router import router as trips_router
 from app.modules.maintenance.router import router as maintenance_router
 from app.modules.finance.router import router as finance_router
+from app.modules.dashboard.router import router as dashboard_router
+from app.modules.reports.router import router as reports_router
 
-app = FastAPI(title="TransitOps API", version="2.0.0")
+from contextlib import asynccontextmanager
+from app.core.cache import init_redis, close_redis
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_redis()
+    yield
+    await close_redis()
+
+app = FastAPI(title="TransitOps API", version="2.0.0", lifespan=lifespan)
 
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(fleet_router, prefix="/api/v1")
@@ -18,6 +29,8 @@ app.include_router(drivers_router, prefix="/api/v1")
 app.include_router(trips_router, prefix="/api/v1")
 app.include_router(maintenance_router, prefix="/api/v1")
 app.include_router(finance_router, prefix="/api/v1")
+app.include_router(dashboard_router, prefix="/api/v1")
+app.include_router(reports_router, prefix="/api/v1")
 
 @app.get("/health")
 async def health_check():
