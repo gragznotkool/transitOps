@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
+from typing import List
 from app.models.finance import FuelLog, Expense
 from app.models.fleet import Vehicle
 from app.modules.finance import schemas
@@ -25,3 +26,14 @@ async def create_expense(db: AsyncSession, company_id: int, expense_in: schemas.
     await db.commit()
     await db.refresh(db_expense)
     return db_expense
+
+
+from sqlalchemy.future import select
+
+async def get_fuel_logs(db: AsyncSession, company_id: int) -> List[FuelLog]:
+    result = await db.execute(select(FuelLog).filter(FuelLog.company_id == company_id))
+    return list(result.scalars().all())
+
+async def get_expenses(db: AsyncSession, company_id: int) -> List[Expense]:
+    result = await db.execute(select(Expense).filter(Expense.company_id == company_id))
+    return list(result.scalars().all())

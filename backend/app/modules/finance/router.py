@@ -23,3 +23,20 @@ async def create_expense(
     current_user: User = Depends(get_current_user)
 ):
     return await service.create_expense(db, current_user.company_id, expense_in)
+
+
+from typing import List
+
+@router.get("/fuel-logs", response_model=List[schemas.FuelLogResponse])
+async def get_fuel_logs(
+    db: AsyncSession = Depends(get_db_session),
+    current_user: User = Depends(get_current_user)
+):
+    return await service.get_fuel_logs(db, current_user.company_id)
+
+@router.get("/expenses", response_model=List[schemas.ExpenseResponse])
+async def get_expenses(
+    db: AsyncSession = Depends(get_db_session),
+    current_user: User = Depends(get_current_user)
+):
+    return await service.get_expenses(db, current_user.company_id)
