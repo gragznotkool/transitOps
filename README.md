@@ -43,7 +43,6 @@ npm run dev
 
 ## 3. Where things live
 
-| I need to... | Look here |
 |---|---|
 | Understand the product/business rules | `docs/PRD.md` |
 | Know what I own vs. a teammate | `.agents/rules/team-ownership.md` |
