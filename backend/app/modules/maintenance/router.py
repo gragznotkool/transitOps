@@ -24,7 +24,7 @@ async def create_maintenance_log(
     db: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):
-    return await service.create_maintenance_log(db, current_user.company_id, log_in)
+    return await service.create_maintenance_log(db, current_user.company_id, current_user.id, log_in)
 
 @router.post("/{log_id}/close", response_model=schemas.MaintenanceLogResponse)
 async def close_maintenance_log(
@@ -32,4 +32,4 @@ async def close_maintenance_log(
     db: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):
-    return await service.close_maintenance_log(db, current_user.company_id, log_id)
+    return await service.close_maintenance_log(db, current_user.company_id, current_user.id, log_id)

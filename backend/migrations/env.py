@@ -30,6 +30,7 @@ from app.models.drivers import Driver  # noqa: F401, E402
 from app.models.trips import Trip  # noqa: F401, E402
 from app.models.maintenance import MaintenanceLog  # noqa: F401, E402
 from app.models.finance import FuelLog, Expense  # noqa: F401, E402
+from app.models.audit import AuditLog  # noqa: F401, E402
 
 # add your model's MetaData object here
 # for 'autogenerate' support

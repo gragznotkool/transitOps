@@ -6,6 +6,7 @@ from datetime import datetime
 
 from app.models.maintenance import MaintenanceLog
 from app.models.fleet import Vehicle
+from app.models.audit import AuditLog
 from app.modules.maintenance import schemas
 from app.core.constants import VehicleStatus
 
@@ -20,7 +21,7 @@ async def get_maintenance_logs(db: AsyncSession, company_id: int, page: int = 1,
     items = result.scalars().all()
     return items, total
 
-async def create_maintenance_log(db: AsyncSession, company_id: int, log_in: schemas.MaintenanceLogCreate) -> MaintenanceLog:
+async def create_maintenance_log(db: AsyncSession, company_id: int, user_id: int, log_in: schemas.MaintenanceLogCreate) -> MaintenanceLog:
     vehicle = await db.get(Vehicle, log_in.vehicle_id, with_for_update=True)
     if not vehicle or vehicle.company_id != company_id:
         raise HTTPException(status_code=404, detail="Vehicle not found")
@@ -36,6 +37,19 @@ async def create_maintenance_log(db: AsyncSession, company_id: int, log_in: sche
 
     db_log = MaintenanceLog(**log_in.model_dump(), company_id=company_id, status="Open")
     db.add(db_log)
+    await db.flush()
+
+    audit = AuditLog(
+        entity_type="vehicle",
+        entity_id=vehicle.id,
+        action="status_change",
+        old_value=VehicleStatus.AVAILABLE,
+        new_value=VehicleStatus.IN_SHOP,
+        user_id=user_id,
+        company_id=company_id
+    )
+    db.add(audit)
+
     await db.commit()
     await db.refresh(db_log)
     
@@ -46,7 +60,7 @@ async def create_maintenance_log(db: AsyncSession, company_id: int, log_in: sche
     
     return db_log
 
-async def close_maintenance_log(db: AsyncSession, company_id: int, log_id: int) -> MaintenanceLog:
+async def close_maintenance_log(db: AsyncSession, company_id: int, user_id: int, log_id: int) -> MaintenanceLog:
     log = await db.get(MaintenanceLog, log_id, with_for_update=True)
     if not log or log.company_id != company_id:
         raise HTTPException(status_code=404, detail="Maintenance log not found")
@@ -66,6 +80,18 @@ async def close_maintenance_log(db: AsyncSession, company_id: int, log_id: int) 
     log.status = "Closed"
     log.closed_at = datetime.utcnow()
     
+    if vehicle:
+        audit = AuditLog(
+            entity_type="vehicle",
+            entity_id=vehicle.id,
+            action="status_change",
+            old_value=VehicleStatus.IN_SHOP,
+            new_value=VehicleStatus.AVAILABLE,
+            user_id=user_id,
+            company_id=company_id
+        )
+        db.add(audit)
+
     await db.commit()
     await db.refresh(log)
     

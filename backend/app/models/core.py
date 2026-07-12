@@ -23,6 +23,7 @@ class User(TenantBase):
     email = Column(String, unique=True, index=True, nullable=False)
     full_name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
+    hashed_refresh_token = Column(String, nullable=True)
     is_active = Column(Boolean, default=True)
     
     role_id = Column(Integer, ForeignKey("roles.id"))

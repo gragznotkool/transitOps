@@ -8,6 +8,8 @@ import { TripsScreen } from './features/trips/TripsScreen';
 import { MaintenanceScreen } from './features/maintenance/MaintenanceScreen';
 import { FinanceScreen } from './features/finance/FinanceScreen';
 
+import { Toaster } from 'react-hot-toast';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -23,6 +25,7 @@ export const App: React.FC = () => {
       <AppProvider>
         <Router>
           <Layout>
+            <Toaster position="top-right" />
             <Routes>
               <Route path="/" element={<DashboardScreen />} />
               <Route path="/trips" element={<TripsScreen />} />

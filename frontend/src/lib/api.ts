@@ -88,26 +88,26 @@ export interface KPIs {
 
 // --- Local Storage Database Mocking ---
 const INITIAL_VEHICLES: Vehicle[] = [
-  { id: 1, registration_number: 'TRK-001', name_model: 'Volvo VNL 860', type: 'Heavy Duty', max_load_capacity_kg: 22000, acquisition_cost: 145000, region: 'North', status: 'Available', odometer_km: 124500 },
-  { id: 2, registration_number: 'VAN-005', name_model: 'Ford Transit 350', type: 'Light Duty', max_load_capacity_kg: 1800, acquisition_cost: 48000, region: 'North', status: 'Available', odometer_km: 34200 },
-  { id: 3, registration_number: 'TRK-002', name_model: 'Freightliner Cascadia', type: 'Heavy Duty', max_load_capacity_kg: 24000, acquisition_cost: 155000, region: 'South', status: 'On Trip', odometer_km: 89000 },
-  { id: 4, registration_number: 'TRK-003', name_model: 'Kenworth T680', type: 'Heavy Duty', max_load_capacity_kg: 23000, acquisition_cost: 160000, region: 'East', status: 'In Shop', odometer_km: 198000 },
-  { id: 5, registration_number: 'VAN-004', name_model: 'Mercedes Sprinter', type: 'Light Duty', max_load_capacity_kg: 2200, acquisition_cost: 52000, region: 'West', status: 'Available', odometer_km: 67100 },
+  { id: 1, registration_number: 'MH12-TRK-001', name_model: 'Tata Signa 4825.T', type: 'Heavy Duty', max_load_capacity_kg: 28000, acquisition_cost: 3500000, region: 'Mumbai', status: 'Available', odometer_km: 124500 },
+  { id: 2, registration_number: 'DL01-VAN-005', name_model: 'Ashok Leyland BADA DOST', type: 'Light Duty', max_load_capacity_kg: 2990, acquisition_cost: 850000, region: 'Delhi-NCR', status: 'Available', odometer_km: 34200 },
+  { id: 3, registration_number: 'KA03-TRK-002', name_model: 'Mahindra Blazo X', type: 'Heavy Duty', max_load_capacity_kg: 35000, acquisition_cost: 4200000, region: 'Bangalore', status: 'On Trip', odometer_km: 89000 },
+  { id: 4, registration_number: 'TN07-TRK-003', name_model: 'BharatBenz 2823C', type: 'Heavy Duty', max_load_capacity_kg: 28000, acquisition_cost: 3800000, region: 'Chennai', status: 'In Shop', odometer_km: 198000 },
+  { id: 5, registration_number: 'GJ01-VAN-004', name_model: 'Tata Winger Cargo', type: 'Light Duty', max_load_capacity_kg: 1800, acquisition_cost: 950000, region: 'Ahmedabad', status: 'Available', odometer_km: 67100 },
 ];
 
 const INITIAL_DRIVERS: Driver[] = [
-  { id: 1, full_name: 'Alice Johnson', license_number: 'DL-12345', license_category: 'CDL-A', license_expiry_date: '2027-08-15', contact_number: '555-0100', status: 'Available', safety_score: 96, harsh_braking_events: 1, speeding_events: 0 },
-  { id: 2, full_name: 'Michael Smith', license_number: 'DL-67890', license_category: 'CDL-A', license_expiry_date: '2026-11-20', contact_number: '555-0101', status: 'On Trip', safety_score: 84, harsh_braking_events: 4, speeding_events: 2 },
-  { id: 3, full_name: 'Sarah Connor', license_number: 'DL-45612', license_category: 'CDL-B', license_expiry_date: '2028-02-10', contact_number: '555-0102', status: 'Available', safety_score: 98, harsh_braking_events: 0, speeding_events: 0 },
-  { id: 4, full_name: 'David Miller', license_number: 'DL-89012', license_category: 'Class D', license_expiry_date: '2025-05-18', contact_number: '555-0103', status: 'Suspended', safety_score: 62, harsh_braking_events: 12, speeding_events: 8 },
-  { id: 5, full_name: 'Robert Chen', license_number: 'DL-34567', license_category: 'CDL-A', license_expiry_date: '2027-04-30', contact_number: '555-0104', status: 'Off Duty', safety_score: 91, harsh_braking_events: 2, speeding_events: 1 },
+  { id: 1, full_name: 'Rajesh Kumar', license_number: 'DL-1420230123456', license_category: 'HMV', license_expiry_date: '2027-08-15', contact_number: '9876543210', status: 'Available', safety_score: 96, harsh_braking_events: 1, speeding_events: 0 },
+  { id: 2, full_name: 'Amit Sharma', license_number: 'MH-1220210067890', license_category: 'HMV', license_expiry_date: '2026-11-20', contact_number: '9876543211', status: 'On Trip', safety_score: 84, harsh_braking_events: 4, speeding_events: 2 },
+  { id: 3, full_name: 'Priya Singh', license_number: 'KA-0320240045612', license_category: 'LMV', license_expiry_date: '2028-02-10', contact_number: '9876543212', status: 'Available', safety_score: 98, harsh_braking_events: 0, speeding_events: 0 },
+  { id: 4, full_name: 'Ravi Verma', license_number: 'TN-0720190089012', license_category: 'HMV', license_expiry_date: '2025-05-18', contact_number: '9876543213', status: 'Suspended', safety_score: 62, harsh_braking_events: 12, speeding_events: 8 },
+  { id: 5, full_name: 'Arjun Desai', license_number: 'GJ-0120220034567', license_category: 'LMV', license_expiry_date: '2027-04-30', contact_number: '9876543214', status: 'Off Duty', safety_score: 91, harsh_braking_events: 2, speeding_events: 1 },
 ];
 
 const INITIAL_TRIPS: Trip[] = [
-  { id: 1, source: 'Chicago Depot', destination: 'Detroit Logistics Center', vehicle_id: 3, driver_id: 2, cargo_weight_kg: 18500, planned_distance_km: 450, actual_distance_km: null, final_odometer: null, fuel_consumed_liters: null, status: 'Dispatched', dispatched_at: new Date(Date.now() - 3600000 * 4).toISOString(), completed_at: null },
-  { id: 2, source: 'Dallas Port', destination: 'Houston Hub', vehicle_id: 1, driver_id: 1, cargo_weight_kg: 12000, planned_distance_km: 380, actual_distance_km: 382, final_odometer: 124500, fuel_consumed_liters: 120, status: 'Completed', dispatched_at: new Date(Date.now() - 86400000 * 2).toISOString(), completed_at: new Date(Date.now() - 86400000 * 2 + 3600000 * 5).toISOString() },
-  { id: 3, source: 'Seattle Yard', destination: 'Portland Warehouse', vehicle_id: 2, driver_id: 3, cargo_weight_kg: 1200, planned_distance_km: 280, actual_distance_km: 279, final_odometer: 34200, fuel_consumed_liters: 35, status: 'Completed', dispatched_at: new Date(Date.now() - 86400000 * 5).toISOString(), completed_at: new Date(Date.now() - 86400000 * 5 + 3600000 * 3.5).toISOString() },
-  { id: 4, source: 'Atlanta Terminal', destination: 'Miami Hub', vehicle_id: 5, driver_id: 5, cargo_weight_kg: 950, planned_distance_km: 1060, actual_distance_km: null, final_odometer: null, fuel_consumed_liters: null, status: 'Draft', dispatched_at: null, completed_at: null },
+  { id: 1, source: 'Mumbai Port', destination: 'Pune Logistics Hub', vehicle_id: 3, driver_id: 2, cargo_weight_kg: 18500, planned_distance_km: 150, actual_distance_km: null, final_odometer: null, fuel_consumed_liters: null, status: 'Dispatched', dispatched_at: new Date(Date.now() - 3600000 * 4).toISOString(), completed_at: null },
+  { id: 2, source: 'Delhi Depot', destination: 'Gurgaon Tech Park', vehicle_id: 1, driver_id: 1, cargo_weight_kg: 12000, planned_distance_km: 40, actual_distance_km: 42, final_odometer: 124500, fuel_consumed_liters: 15, status: 'Completed', dispatched_at: new Date(Date.now() - 86400000 * 2).toISOString(), completed_at: new Date(Date.now() - 86400000 * 2 + 3600000 * 5).toISOString() },
+  { id: 3, source: 'Bangalore Yard', destination: 'Mysore Warehouse', vehicle_id: 2, driver_id: 3, cargo_weight_kg: 1200, planned_distance_km: 145, actual_distance_km: 143, final_odometer: 34200, fuel_consumed_liters: 20, status: 'Completed', dispatched_at: new Date(Date.now() - 86400000 * 5).toISOString(), completed_at: new Date(Date.now() - 86400000 * 5 + 3600000 * 3.5).toISOString() },
+  { id: 4, source: 'Chennai Terminal', destination: 'Hyderabad Hub', vehicle_id: 5, driver_id: 5, cargo_weight_kg: 950, planned_distance_km: 630, actual_distance_km: null, final_odometer: null, fuel_consumed_liters: null, status: 'Draft', dispatched_at: null, completed_at: null },
 ];
 
 const INITIAL_MAINTENANCE: MaintenanceLog[] = [

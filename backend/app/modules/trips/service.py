@@ -7,6 +7,7 @@ from datetime import datetime, date
 from app.models.trips import Trip
 from app.models.fleet import Vehicle
 from app.models.drivers import Driver
+from app.models.audit import AuditLog
 from app.modules.trips import schemas
 from app.core.constants import TripStatus, VehicleStatus, DriverStatus
 
@@ -23,7 +24,7 @@ async def get_trips(db: AsyncSession, company_id: int, trip_status: str = None, 
     items = result.scalars().all()
     return items, total
 
-async def create_trip(db: AsyncSession, company_id: int, trip_in: schemas.TripCreate) -> Trip:
+async def create_trip(db: AsyncSession, company_id: int, user_id: int, trip_in: schemas.TripCreate) -> Trip:
     # Basic pre-check (non-locking)
     vehicle = await db.get(Vehicle, trip_in.vehicle_id)
     driver = await db.get(Driver, trip_in.driver_id)
@@ -61,6 +62,17 @@ async def create_trip(db: AsyncSession, company_id: int, trip_in: schemas.TripCr
 
     db_trip = Trip(**trip_in.model_dump(), company_id=company_id)
     db.add(db_trip)
+    await db.flush()
+    
+    audit = AuditLog(
+        entity_type="trip",
+        entity_id=db_trip.id,
+        action="create",
+        new_value=TripStatus.DRAFT,
+        user_id=user_id,
+        company_id=company_id
+    )
+    db.add(audit)
     await db.commit()
     await db.refresh(db_trip)
     
@@ -71,7 +83,7 @@ async def create_trip(db: AsyncSession, company_id: int, trip_in: schemas.TripCr
     
     return db_trip
 
-async def dispatch_trip(db: AsyncSession, company_id: int, trip_id: int) -> Trip:
+async def dispatch_trip(db: AsyncSession, company_id: int, user_id: int, trip_id: int) -> Trip:
     # We must use a nested transaction (or explicit commit) to hold locks until done
     trip = await db.get(Trip, trip_id, with_for_update=True)
     if not trip or trip.company_id != company_id:
@@ -107,6 +119,17 @@ async def dispatch_trip(db: AsyncSession, company_id: int, trip_id: int) -> Trip
     trip.status = TripStatus.DISPATCHED
     trip.dispatched_at = datetime.utcnow()
     
+    audit = AuditLog(
+        entity_type="trip",
+        entity_id=trip.id,
+        action="status_change",
+        old_value=TripStatus.DRAFT,
+        new_value=TripStatus.DISPATCHED,
+        user_id=user_id,
+        company_id=company_id
+    )
+    db.add(audit)
+    
     await db.commit()
     await db.refresh(trip)
     
@@ -117,7 +140,7 @@ async def dispatch_trip(db: AsyncSession, company_id: int, trip_id: int) -> Trip
     
     return trip
 
-async def complete_trip(db: AsyncSession, company_id: int, trip_id: int, data: schemas.TripComplete) -> Trip:
+async def complete_trip(db: AsyncSession, company_id: int, user_id: int, trip_id: int, data: schemas.TripComplete) -> Trip:
     trip = await db.get(Trip, trip_id, with_for_update=True)
     if not trip or trip.company_id != company_id:
         raise HTTPException(status_code=404, detail="Trip not found")
@@ -141,6 +164,17 @@ async def complete_trip(db: AsyncSession, company_id: int, trip_id: int, data: s
     trip.final_odometer = data.final_odometer
     trip.fuel_consumed_liters = data.fuel_consumed_liters
 
+    audit = AuditLog(
+        entity_type="trip",
+        entity_id=trip.id,
+        action="status_change",
+        old_value=TripStatus.DISPATCHED,
+        new_value=TripStatus.COMPLETED,
+        user_id=user_id,
+        company_id=company_id
+    )
+    db.add(audit)
+
     await db.commit()
     await db.refresh(trip)
     
@@ -151,7 +185,7 @@ async def complete_trip(db: AsyncSession, company_id: int, trip_id: int, data: s
     
     return trip
 
-async def cancel_trip(db: AsyncSession, company_id: int, trip_id: int) -> Trip:
+async def cancel_trip(db: AsyncSession, company_id: int, user_id: int, trip_id: int) -> Trip:
     trip = await db.get(Trip, trip_id, with_for_update=True)
     if not trip or trip.company_id != company_id:
         raise HTTPException(status_code=404, detail="Trip not found")
@@ -169,7 +203,19 @@ async def cancel_trip(db: AsyncSession, company_id: int, trip_id: int) -> Trip:
         vehicle.status = VehicleStatus.AVAILABLE
         driver.status = DriverStatus.AVAILABLE
 
+    old_status = trip.status
     trip.status = TripStatus.CANCELLED
+    
+    audit = AuditLog(
+        entity_type="trip",
+        entity_id=trip.id,
+        action="status_change",
+        old_value=old_status,
+        new_value=TripStatus.CANCELLED,
+        user_id=user_id,
+        company_id=company_id
+    )
+    db.add(audit)
     
     await db.commit()
     await db.refresh(trip)

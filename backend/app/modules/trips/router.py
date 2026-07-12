@@ -26,7 +26,7 @@ async def create_trip(
     db: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):
-    return await service.create_trip(db, current_user.company_id, trip_in)
+    return await service.create_trip(db, current_user.company_id, current_user.id, trip_in)
 
 @router.post("/{trip_id}/dispatch", response_model=schemas.TripResponse)
 async def dispatch_trip(
@@ -34,7 +34,7 @@ async def dispatch_trip(
     db: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):
-    return await service.dispatch_trip(db, current_user.company_id, trip_id)
+    return await service.dispatch_trip(db, current_user.company_id, current_user.id, trip_id)
 
 @router.post("/{trip_id}/complete", response_model=schemas.TripResponse)
 async def complete_trip(
@@ -43,7 +43,7 @@ async def complete_trip(
     db: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):
-    return await service.complete_trip(db, current_user.company_id, trip_id, data)
+    return await service.complete_trip(db, current_user.company_id, current_user.id, trip_id, data)
 
 @router.post("/{trip_id}/cancel", response_model=schemas.TripResponse)
 async def cancel_trip(
@@ -51,4 +51,4 @@ async def cancel_trip(
     db: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):
-    return await service.cancel_trip(db, current_user.company_id, trip_id)
+    return await service.cancel_trip(db, current_user.company_id, current_user.id, trip_id)

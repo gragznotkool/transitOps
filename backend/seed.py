@@ -54,26 +54,26 @@ async def seed_data():
             print("Admin user seeded: admin@transitops.local / password123")
 
         # Seed initial vehicles
-        result = await session.execute(select(Vehicle).filter(Vehicle.registration_number == "TRK-001"))
+        result = await session.execute(select(Vehicle).filter(Vehicle.registration_number == "MH12-TRK-001"))
         if not result.scalars().first():
             v1 = Vehicle(
-                registration_number="TRK-001", name_model="Volvo VNL", type="Heavy Duty",
-                max_load_capacity_kg=20000, acquisition_cost=150000, region="North", company_id=company.id
+                registration_number="MH12-TRK-001", name_model="Tata Signa 4825.T", type="Heavy Duty",
+                max_load_capacity_kg=28000, acquisition_cost=3500000, region="Mumbai", company_id=company.id
             )
             v2 = Vehicle(
-                registration_number="VAN-005", name_model="Ford Transit", type="Light Duty",
-                max_load_capacity_kg=2000, acquisition_cost=45000, region="North", company_id=company.id
+                registration_number="DL01-VAN-005", name_model="Ashok Leyland BADA DOST", type="Light Duty",
+                max_load_capacity_kg=2990, acquisition_cost=850000, region="Delhi-NCR", company_id=company.id
             )
             session.add_all([v1, v2])
             await session.commit()
             print("Vehicles seeded.")
 
         # Seed initial drivers
-        result = await session.execute(select(Driver).filter(Driver.license_number == "DL-12345"))
+        result = await session.execute(select(Driver).filter(Driver.license_number == "DL-1420230123456"))
         if not result.scalars().first():
             d1 = Driver(
-                full_name="Alice Johnson", license_number="DL-12345", license_category="CDL-A",
-                license_expiry_date=date.today() + timedelta(days=365), contact_number="555-0100", company_id=company.id
+                full_name="Rajesh Kumar", license_number="DL-1420230123456", license_category="HMV",
+                license_expiry_date=date.today() + timedelta(days=365), contact_number="9876543210", company_id=company.id
             )
             session.add(d1)
             await session.commit()

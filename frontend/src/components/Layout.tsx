@@ -16,20 +16,21 @@ import {
   ChevronDown
 } from 'lucide-react';
 
+import { useWebSocket } from '../hooks/useWebSocket';
+
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  useWebSocket();
   const { 
     darkMode, 
     toggleDarkMode, 
     filters, 
     setFilters, 
     currentUser, 
-    switchRole,
-    demoMode,
-    setDemoMode 
+    switchRole
   } = useApp();
 
   const location = useLocation();
@@ -86,25 +87,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-slate-100 dark:border-darkBorder/40 space-y-4">
           
-          {/* Demo Mode Toggle */}
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-darkBorder/50">
-            <div>
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-200 block">Simulation Mode</span>
-              <span className="text-[10px] text-slate-400">Offline Mock Data Engine</span>
-            </div>
-            <button
-              onClick={() => setDemoMode(!demoMode)}
-              className={`w-9 h-5 rounded-full p-0.5 transition-colors focus:outline-none ${
-                demoMode ? 'bg-brand-500' : 'bg-slate-300 dark:bg-slate-750'
-              }`}
-            >
-              <div 
-                className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-200 ${
-                  demoMode ? 'translate-x-4' : 'translate-x-0'
-                }`}
-              />
-            </button>
-          </div>
 
           {/* User Session Info */}
           {currentUser && (
