@@ -38,6 +38,12 @@ async def create_maintenance_log(db: AsyncSession, company_id: int, log_in: sche
     db.add(db_log)
     await db.commit()
     await db.refresh(db_log)
+    
+    from app.modules.dashboard.service import invalidate_dashboard_cache
+    from app.core.cache import broadcast_event
+    await invalidate_dashboard_cache(company_id)
+    await broadcast_event(company_id, "vehicle.status_changed", {"id": vehicle.id, "status": "In Shop"})
+    
     return db_log
 
 async def close_maintenance_log(db: AsyncSession, company_id: int, log_id: int) -> MaintenanceLog:
@@ -62,4 +68,11 @@ async def close_maintenance_log(db: AsyncSession, company_id: int, log_id: int) 
     
     await db.commit()
     await db.refresh(log)
+    
+    from app.modules.dashboard.service import invalidate_dashboard_cache
+    from app.core.cache import broadcast_event
+    await invalidate_dashboard_cache(company_id)
+    if vehicle:
+        await broadcast_event(company_id, "vehicle.status_changed", {"id": vehicle.id, "status": "Available"})
+        
     return log

@@ -65,7 +65,9 @@ async def create_trip(db: AsyncSession, company_id: int, trip_in: schemas.TripCr
     await db.refresh(db_trip)
     
     from app.modules.dashboard.service import invalidate_dashboard_cache
+    from app.core.cache import broadcast_event
     await invalidate_dashboard_cache(company_id)
+    await broadcast_event(company_id, "trip.status_changed", {"id": db_trip.id, "status": "Draft"})
     
     return db_trip
 
@@ -109,7 +111,9 @@ async def dispatch_trip(db: AsyncSession, company_id: int, trip_id: int) -> Trip
     await db.refresh(trip)
     
     from app.modules.dashboard.service import invalidate_dashboard_cache
+    from app.core.cache import broadcast_event
     await invalidate_dashboard_cache(company_id)
+    await broadcast_event(company_id, "trip.status_changed", {"id": trip.id, "status": "Dispatched"})
     
     return trip
 
@@ -139,6 +143,12 @@ async def complete_trip(db: AsyncSession, company_id: int, trip_id: int, data: s
 
     await db.commit()
     await db.refresh(trip)
+    
+    from app.modules.dashboard.service import invalidate_dashboard_cache
+    from app.core.cache import broadcast_event
+    await invalidate_dashboard_cache(company_id)
+    await broadcast_event(company_id, "trip.status_changed", {"id": trip.id, "status": "Completed"})
+    
     return trip
 
 async def cancel_trip(db: AsyncSession, company_id: int, trip_id: int) -> Trip:
@@ -160,6 +170,13 @@ async def cancel_trip(db: AsyncSession, company_id: int, trip_id: int) -> Trip:
         driver.status = DriverStatus.AVAILABLE
 
     trip.status = TripStatus.CANCELLED
+    
     await db.commit()
     await db.refresh(trip)
+    
+    from app.modules.dashboard.service import invalidate_dashboard_cache
+    from app.core.cache import broadcast_event
+    await invalidate_dashboard_cache(company_id)
+    await broadcast_event(company_id, "trip.status_changed", {"id": trip.id, "status": "Cancelled"})
+    
     return trip

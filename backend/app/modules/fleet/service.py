@@ -27,6 +27,10 @@ async def create_vehicle(db: AsyncSession, company_id: int, vehicle_in: schemas.
     db.add(db_vehicle)
     await db.commit()
     await db.refresh(db_vehicle)
+
+    from app.core.cache import broadcast_event
+    await broadcast_event(company_id, "vehicle.status_changed", {"id": db_vehicle.id, "status": db_vehicle.status})
+    
     return db_vehicle
 
 async def update_vehicle(db: AsyncSession, company_id: int, vehicle_id: int, vehicle_in: schemas.VehicleUpdate) -> Vehicle:
@@ -41,6 +45,10 @@ async def update_vehicle(db: AsyncSession, company_id: int, vehicle_id: int, veh
         
     await db.commit()
     await db.refresh(db_vehicle)
+    
+    from app.core.cache import broadcast_event
+    await broadcast_event(company_id, "vehicle.status_changed", {"id": db_vehicle.id, "status": db_vehicle.status})
+    
     return db_vehicle
 
 async def retire_vehicle(db: AsyncSession, company_id: int, vehicle_id: int) -> Vehicle:
@@ -58,4 +66,8 @@ async def retire_vehicle(db: AsyncSession, company_id: int, vehicle_id: int) -> 
     db_vehicle.status = VehicleStatus.RETIRED
     await db.commit()
     await db.refresh(db_vehicle)
+    
+    from app.core.cache import broadcast_event
+    await broadcast_event(company_id, "vehicle.status_changed", {"id": db_vehicle.id, "status": db_vehicle.status})
+    
     return db_vehicle

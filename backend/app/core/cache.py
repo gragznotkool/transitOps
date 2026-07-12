@@ -15,3 +15,20 @@ async def close_redis():
 
 def get_redis() -> Redis:
     return redis_client
+
+import json
+
+async def broadcast_event(company_id: int, event_type: str, data: dict):
+    """
+    Publish an event to the Redis Pub/Sub channel so it can be picked up
+    by WebSocket listeners on any API instance.
+    """
+    if redis_client:
+        message = {
+            "company_id": company_id,
+            "payload": {
+                "type": event_type,
+                **data
+            }
+        }
+        await redis_client.publish("transitops_events", json.dumps(message))
