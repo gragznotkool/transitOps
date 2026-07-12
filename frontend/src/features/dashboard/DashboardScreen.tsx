@@ -39,6 +39,7 @@ import {
   CartesianGrid, 
   Legend 
 } from 'recharts';
+import { FleetMap } from './FleetMap';
 
 export const DashboardScreen: React.FC = () => {
   const { demoMode, filters, darkMode } = useApp();
@@ -78,12 +79,6 @@ export const DashboardScreen: React.FC = () => {
     return vehicles.filter(v => v.odometer_km > 120000 && v.status === 'Available').length;
   };
 
-  // Driver Safety Leaderboard - Top Drivers
-  const safetyDrivers = drivers
-    ? [...drivers]
-        .filter(d => d.safety_score !== undefined)
-        .sort((a, b) => (b.safety_score || 0) - (a.safety_score || 0))
-    : [];
 
   // PDF Export
   const exportPDF = () => {
@@ -377,7 +372,7 @@ export const DashboardScreen: React.FC = () => {
                       borderRadius: '8px'
                     }} 
                   />
-                  <Bar dataKey="km_per_liter" name="KM/L" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                  <Bar dataKey="km_per_liter" name="KM/L" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={40} stroke="none" background={{ fill: 'transparent' }} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -424,11 +419,11 @@ export const DashboardScreen: React.FC = () => {
 
         </div>
 
-        {/* Unique Feature 4: "Digital Twin" Fleet Map View & Leaderboard */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Unique Feature 4: "Digital Twin" Fleet Map View */}
+        <div className="grid grid-cols-1 gap-6">
           
           {/* Digital Twin Map */}
-          <div className="glass-panel p-5 lg:col-span-2 space-y-4 flex flex-col">
+          <div className="glass-panel p-5 space-y-4 flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white font-display flex items-center gap-2">
@@ -457,121 +452,11 @@ export const DashboardScreen: React.FC = () => {
             </div>
 
             {/* Virtualized Fleet Grid Grid representing locations */}
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[300px] bg-slate-100/50 dark:bg-slate-900/40 p-4 rounded-xl border border-slate-200/50 dark:border-darkBorder/40">
-              {filteredVehiclesForTwin && filteredVehiclesForTwin.length > 0 ? (
-                filteredVehiclesForTwin.map(vehicle => {
-                  const colors = VEHICLE_STATUS_COLORS[vehicle.status] || VEHICLE_STATUS_COLORS.Available;
-                  const isMoving = vehicle.status === 'On Trip';
-                  const inService = vehicle.status === 'In Shop';
-                  
-                  return (
-                    <div 
-                      key={vehicle.id} 
-                      className="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-200/60 dark:border-darkBorder/50 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold font-display px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 uppercase">
-                          {vehicle.registration_number}
-                        </span>
-                        
-                        {/* Status indicators */}
-                        <div className="flex items-center gap-1.5">
-                          <span className={`h-2.5 w-2.5 rounded-full ${colors.dot} ${
-                            isMoving ? 'pulse-blue' : inService ? 'animate-pulse' : ''
-                          }`} />
-                          <span className={`text-[10px] font-bold ${colors.text}`}>
-                            {vehicle.status}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Visual rendering of Truck/Van based on model */}
-                      <div className="my-4 flex items-center justify-center p-3 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-darkBorder/30">
-                        <Truck className={`w-12 h-12 ${
-                          isMoving 
-                            ? 'text-blue-500 dark:text-blue-400' 
-                            : inService 
-                              ? 'text-amber-500 dark:text-amber-400' 
-                              : vehicle.status === 'Retired' 
-                                ? 'text-rose-400 opacity-60' 
-                                : 'text-emerald-500 dark:text-emerald-400'
-                        }`} />
-                      </div>
-
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{vehicle.name_model}</h4>
-                        <div className="mt-2 flex items-center justify-between text-[11px] text-slate-400">
-                          <span>Odo: {vehicle.odometer_km.toLocaleString()} km</span>
-                          <span className="text-brand-400 dark:text-brand-300 font-semibold">{vehicle.region}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="col-span-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 py-12">
-                  <Truck className="w-12 h-12 mb-3 stroke-[1.5]" />
-                  <p className="text-sm font-semibold">No vehicles match selection</p>
-                  <p className="text-xs">Adjust search query or filters to search again.</p>
-                </div>
-              )}
+            <div className="flex-1 w-full h-[400px]">
+              <FleetMap vehicles={filteredVehiclesForTwin || []} />
             </div>
           </div>
 
-          {/* Driver Leaderboard */}
-          <div className="glass-panel p-5 space-y-4 flex flex-col">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white font-display flex items-center gap-2">
-                <Award className="w-5 h-5 text-amber-500" />
-                Safety Leaderboard
-              </h3>
-              <p className="text-xs text-slate-400">Driver safety scoring rank metrics</p>
-            </div>
-
-            <div className="flex-1 space-y-3 overflow-y-auto max-h-[380px] pr-1">
-              {safetyDrivers.map((driver, index) => {
-                const isTop3 = index < 3;
-                const score = driver.safety_score || 0;
-                
-                let medalColor = '';
-                if (index === 0) medalColor = 'bg-amber-100 text-amber-600 border-amber-300';
-                else if (index === 1) medalColor = 'bg-slate-100 text-slate-500 border-slate-300';
-                else if (index === 2) medalColor = 'bg-amber-50 text-amber-700 border-amber-200';
-                
-                return (
-                  <div 
-                    key={driver.id} 
-                    className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-darkBorder/40"
-                  >
-                    <div className="flex items-center gap-3">
-                      {isTop3 ? (
-                        <div className={`w-7 h-7 rounded-full border flex items-center justify-center font-bold text-xs ${medalColor}`}>
-                          {index + 1}
-                        </div>
-                      ) : (
-                        <div className="w-7 h-7 rounded-full flex items-center justify-center font-semibold text-xs text-slate-400">
-                          {index + 1}
-                        </div>
-                      )}
-                      
-                      <div>
-                        <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200">{driver.full_name}</h4>
-                        <span className="text-[10px] text-slate-400 block font-medium">CDL: {driver.license_number}</span>
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <div className="flex items-center gap-1 justify-end">
-                        <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
-                        <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200">{score}</span>
-                      </div>
-                      <span className="text-[9px] font-semibold uppercase text-slate-400">Score</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
 
         </div>
 

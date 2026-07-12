@@ -138,10 +138,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 className="bg-transparent focus:outline-none cursor-pointer"
               >
                 <option value="all">All Regions</option>
-                <option value="North">North</option>
-                <option value="South">South</option>
-                <option value="East">East</option>
-                <option value="West">West</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Delhi-NCR">Delhi-NCR</option>
+                <option value="Bangalore">Bangalore</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Ahmedabad">Ahmedabad</option>
               </select>
             </div>
 

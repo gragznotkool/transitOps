@@ -20,9 +20,6 @@ export interface Driver {
   license_expiry_date: string;
   contact_number: string;
   status: string;
-  safety_score?: number; // Unique Feature 3: Driver Leaderboard
-  harsh_braking_events?: number;
-  speeding_events?: number;
 }
 
 export interface Trip {
@@ -96,11 +93,11 @@ const INITIAL_VEHICLES: Vehicle[] = [
 ];
 
 const INITIAL_DRIVERS: Driver[] = [
-  { id: 1, full_name: 'Rajesh Kumar', license_number: 'DL-1420230123456', license_category: 'HMV', license_expiry_date: '2027-08-15', contact_number: '9876543210', status: 'Available', safety_score: 96, harsh_braking_events: 1, speeding_events: 0 },
-  { id: 2, full_name: 'Amit Sharma', license_number: 'MH-1220210067890', license_category: 'HMV', license_expiry_date: '2026-11-20', contact_number: '9876543211', status: 'On Trip', safety_score: 84, harsh_braking_events: 4, speeding_events: 2 },
-  { id: 3, full_name: 'Priya Singh', license_number: 'KA-0320240045612', license_category: 'LMV', license_expiry_date: '2028-02-10', contact_number: '9876543212', status: 'Available', safety_score: 98, harsh_braking_events: 0, speeding_events: 0 },
-  { id: 4, full_name: 'Ravi Verma', license_number: 'TN-0720190089012', license_category: 'HMV', license_expiry_date: '2025-05-18', contact_number: '9876543213', status: 'Suspended', safety_score: 62, harsh_braking_events: 12, speeding_events: 8 },
-  { id: 5, full_name: 'Arjun Desai', license_number: 'GJ-0120220034567', license_category: 'LMV', license_expiry_date: '2027-04-30', contact_number: '9876543214', status: 'Off Duty', safety_score: 91, harsh_braking_events: 2, speeding_events: 1 },
+  { id: 1, full_name: 'Rajesh Kumar', license_number: 'DL-1420230123456', license_category: 'HMV', license_expiry_date: '2027-08-15', contact_number: '9876543210', status: 'Available' },
+  { id: 2, full_name: 'Amit Sharma', license_number: 'MH-1220210067890', license_category: 'HMV', license_expiry_date: '2026-11-20', contact_number: '9876543211', status: 'On Trip' },
+  { id: 3, full_name: 'Priya Singh', license_number: 'KA-0320240045612', license_category: 'LMV', license_expiry_date: '2028-02-10', contact_number: '9876543212', status: 'Available' },
+  { id: 4, full_name: 'Ravi Verma', license_number: 'TN-0720190089012', license_category: 'HMV', license_expiry_date: '2025-05-18', contact_number: '9876543213', status: 'Suspended' },
+  { id: 5, full_name: 'Arjun Desai', license_number: 'GJ-0120220034567', license_category: 'LMV', license_expiry_date: '2027-04-30', contact_number: '9876543214', status: 'Off Duty' },
 ];
 
 const INITIAL_TRIPS: Trip[] = [
