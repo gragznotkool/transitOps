@@ -110,13 +110,13 @@ export const DashboardScreen: React.FC = () => {
 
     if (reportName === 'fleet-utilization' && utilizationData) {
       data = utilizationData;
-      headers = ['date', 'utilization_pct'];
+      headers = data.length > 0 ? Object.keys(data[0]) : [];
     } else if (reportName === 'fuel-efficiency' && efficiencyData) {
       data = efficiencyData;
-      headers = ['type', 'km_per_liter'];
+      headers = data.length > 0 ? Object.keys(data[0]) : [];
     } else if (reportName === 'cost-trends' && costTrendsData) {
       data = costTrendsData;
-      headers = ['month', 'Fuel', 'Maintenance', 'Tolls', 'Insurance'];
+      headers = data.length > 0 ? Object.keys(data[0]) : [];
     }
 
     if (data.length === 0) return;
@@ -322,7 +322,7 @@ export const DashboardScreen: React.FC = () => {
                       <stop offset="95%" stopColor="#6379ff" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} tickLine={false} />
+                  <XAxis dataKey={(row) => row.date || row.registration_number || ''} stroke="#94a3b8" fontSize={11} tickLine={false} />
                   <YAxis domain={[0, 100]} stroke="#94a3b8" fontSize={11} tickLine={false} />
                   <Tooltip 
                     contentStyle={{ 
