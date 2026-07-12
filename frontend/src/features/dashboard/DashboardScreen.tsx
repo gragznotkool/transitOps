@@ -138,22 +138,6 @@ export const DashboardScreen: React.FC = () => {
     document.body.removeChild(link);
   };
 
-  // PDF Export
-  const exportPDF = () => {
-    if (!dashboardRef.current) return;
-    setIsExporting(true);
-    const opt = {
-      margin:       0.3,
-      filename:     `transitops-dashboard-${new Date().toISOString().split('T')[0]}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
-    };
-    
-    html2pdf().set(opt).from(dashboardRef.current).save().then(() => {
-      setIsExporting(false);
-    });
-  };
 
   if (kpisLoading || vehiclesLoading) {
     return (
