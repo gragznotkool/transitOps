@@ -28,6 +28,7 @@ export const FleetMap: React.FC<FleetMapProps> = ({ vehicles }) => {
   const [leafletLoaded, setLeafletLoaded] = useState(false);
   const mapInstance = useRef<any>(null);
   const markersLayer = useRef<any>(null);
+  const activeMarkers = useRef<any[]>([]);
 
   useEffect(() => {
     if ((window as any).L) {
@@ -70,6 +71,7 @@ export const FleetMap: React.FC<FleetMapProps> = ({ vehicles }) => {
 
     if (markersLayer.current) {
       markersLayer.current.clearLayers();
+      activeMarkers.current = [];
       
       vehicles.forEach((vehicle) => {
         const baseCoords = REGION_COORDS[vehicle.region];
@@ -99,6 +101,10 @@ export const FleetMap: React.FC<FleetMapProps> = ({ vehicles }) => {
             </div>
           `);
           markersLayer.current.addLayer(marker);
+
+          if (vehicle.status === 'On Trip') {
+            activeMarkers.current.push({ marker, lat, lng });
+          }
         }
       });
       
@@ -108,6 +114,23 @@ export const FleetMap: React.FC<FleetMapProps> = ({ vehicles }) => {
       }
     }
   }, [leafletLoaded, vehicles]);
+
+  useEffect(() => {
+    if (!leafletLoaded) return;
+    
+    const interval = setInterval(() => {
+      activeMarkers.current.forEach(item => {
+        // Subtle movement simulation
+        item.lat += (Math.random() - 0.5) * 0.003;
+        item.lng += (Math.random() - 0.5) * 0.003;
+        if (item.marker && item.marker.setLatLng) {
+          item.marker.setLatLng([item.lat, item.lng]);
+        }
+      });
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [leafletLoaded]);
 
   useEffect(() => {
     return () => {

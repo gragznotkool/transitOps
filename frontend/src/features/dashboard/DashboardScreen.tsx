@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import html2pdf from 'html2pdf.js';
 import { useApp } from '../../lib/context';
 import { AddVehicleModal } from '../vehicles/AddVehicleModal';
 import { AddDriverModal } from '../drivers/AddDriverModal';
@@ -137,6 +138,23 @@ export const DashboardScreen: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  // PDF Export
+  const exportPDF = () => {
+    if (!dashboardRef.current) return;
+    setIsExporting(true);
+    const opt = {
+      margin:       0.3,
+      filename:     `transitops-dashboard-${new Date().toISOString().split('T')[0]}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+    };
+    
+    html2pdf().set(opt).from(dashboardRef.current).save().then(() => {
+      setIsExporting(false);
+    });
+  };
+
   if (kpisLoading || vehiclesLoading) {
     return (
       <div className="flex h-96 items-center justify-center">
@@ -158,6 +176,14 @@ export const DashboardScreen: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={exportPDF}
+            disabled={isExporting}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-white dark:bg-darkCard hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-darkBorder transition-all disabled:opacity-50"
+          >
+            <Printer className="w-4 h-4" />
+            {isExporting ? 'Generating...' : 'Export PDF'}
+          </button>
           <button
             onClick={() => exportCSV('fleet-utilization')}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-white dark:bg-darkCard hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-darkBorder transition-all"
