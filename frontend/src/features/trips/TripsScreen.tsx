@@ -690,7 +690,7 @@ export const TripsScreen: React.FC = () => {
                     <option value="">Select Driver...</option>
                     {availableDrivers?.map(d => (
                       <option key={d.id} value={d.id}>
-                        {d.full_name} — CDL: {d.license_number} (Safety: {d.safety_score})
+                        {d.full_name} — CDL: {d.license_number}
                       </option>
                     ))}
                   </select>
