@@ -124,6 +124,8 @@ class TransitopsTrip(models.Model):
                 if vehicle:
                     if vehicle.current_status == 'retired':
                         raise ValidationError(_("Vehicle %s is retired and cannot be dispatched!") % vehicle.registration_number)
+                    if vehicle.current_status == 'in_shop':
+                        raise ValidationError(_("Vehicle %s is currently in maintenance and cannot be dispatched!") % vehicle.registration_number)
                     
                     active_trips_vehicle = self.search_count([
                         ('vehicle_id', '=', vehicle.id),
