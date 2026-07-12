@@ -16,15 +16,25 @@ This repo is pre-configured for **Google Antigravity**. Every agent session open
 
 ## 2. Start the local stack
 
+We use Docker Compose at the root of the project to spin up the entire stack (Postgres, Redis, FastAPI backend, Celery workers, and the React frontend).
+
 ```bash
-cd backend
-docker compose up -d          # starts Postgres + the FastAPI container
-# once the app skeleton exists:
+# 1. Start all services in the background
+docker compose up -d
+
+# 2. Run database migrations to set up the schema
 docker compose exec api alembic upgrade head
+
+# 3. Seed the database with initial data
 docker compose exec api python seed.py
 ```
 
-Frontend (once scaffolded):
+The applications will be available at:
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000/docs
+
+### Local Frontend Development (Optional)
+If you are actively developing the frontend and want Vite's hot-module replacement to work outside of Docker:
 ```bash
 cd frontend
 npm install
