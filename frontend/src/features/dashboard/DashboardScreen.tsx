@@ -5,7 +5,6 @@ import { AddDriverModal } from '../drivers/AddDriverModal';
 import { 
   useKPIs, 
   useVehicles, 
-  useDrivers, 
   useFleetUtilization,
   useFuelEfficiency,
   useCostTrends
