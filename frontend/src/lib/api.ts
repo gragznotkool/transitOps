@@ -170,7 +170,7 @@ export const api = {
 
   async _fetch(url: string, options: RequestInit = {}): Promise<Response> {
     const res = await fetch(url, options);
-    if (res.status === 401) {
+    if (res.status === 401 || res.status === 403) {
       localStorage.removeItem('token');
       localStorage.removeItem('currentUser');
       window.location.href = '/login';

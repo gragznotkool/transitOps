@@ -25,9 +25,9 @@ async def get_current_user(
         )
         user_id = payload.get("sub")
         if user_id is None:
-            raise HTTPException(status_code=403, detail="Could not validate credentials")
+            raise HTTPException(status_code=401, detail="Could not validate credentials")
     except (JWTError, ValidationError):
-        raise HTTPException(status_code=403, detail="Could not validate credentials")
+        raise HTTPException(status_code=401, detail="Could not validate credentials")
     
     result = await db.execute(select(User).filter(User.id == int(user_id)))
     user = result.scalars().first()

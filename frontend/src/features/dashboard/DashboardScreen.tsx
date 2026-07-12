@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useApp } from '../../lib/context';
+import { AddVehicleModal } from '../vehicles/AddVehicleModal';
+import { AddDriverModal } from '../drivers/AddDriverModal';
 import { 
   useKPIs, 
   useVehicles, 
@@ -22,7 +24,8 @@ import {
   Download, 
   Printer, 
   CheckCircle2,
-  Zap
+  Zap,
+  Plus
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -42,6 +45,8 @@ export const DashboardScreen: React.FC = () => {
   const dashboardRef = useRef<HTMLDivElement>(null);
   const [twinFilter, setTwinFilter] = useState<string>('all');
   const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [showAddVehicle, setShowAddVehicle] = useState(false);
+  const [showAddDriver, setShowAddDriver] = useState(false);
 
   // Queries
   const { data: kpis, isLoading: kpisLoading } = useKPIs(demoMode);
@@ -170,6 +175,18 @@ export const DashboardScreen: React.FC = () => {
           >
             <Download className="w-4 h-4" />
             Export CSV
+          </button>
+          <button
+            onClick={() => setShowAddDriver(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-all"
+          >
+            <Plus className="w-4 h-4" /> Add Driver
+          </button>
+          <button
+            onClick={() => setShowAddVehicle(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-all"
+          >
+            <Plus className="w-4 h-4" /> Add Vehicle
           </button>
           <button
             onClick={exportPDF}
@@ -562,6 +579,7 @@ export const DashboardScreen: React.FC = () => {
 
       {/* PDF Export Target boundary end */}
       {showAddVehicle && <AddVehicleModal onClose={() => setShowAddVehicle(false)} />}
+      {showAddDriver && <AddDriverModal onClose={() => setShowAddDriver(false)} />}
     </div>
 
   );
