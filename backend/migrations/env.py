@@ -25,6 +25,8 @@ from app.core.config import settings
 from app.core.db import Base
 # Import all models to ensure they are registered with Base.metadata
 from app.models.core import Company, Role, User
+from app.models.fleet import Vehicle
+from app.models.drivers import Driver
 
 # add your model's MetaData object here
 # for 'autogenerate' support
