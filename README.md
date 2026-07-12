@@ -63,6 +63,4 @@ npm run dev
 
 Full detail in `.agents/rules/team-ownership.md`.
 
-## 5. Golden rule
 
-The DB schema and API contract are frozen after the first hour of the hackathon. If you need to change either, say so out loud to the team before your agent touches it — every other person's agent session is coding against the current shape.
