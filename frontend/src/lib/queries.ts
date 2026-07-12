@@ -7,7 +7,6 @@ export const useKPIs = (demo: boolean) => {
   return useQuery({
     queryKey: ['kpis', demo],
     queryFn: () => api.getKPIs(demo),
-    refetchInterval: 15000, // Eager refresh every 15s
   });
 };
 

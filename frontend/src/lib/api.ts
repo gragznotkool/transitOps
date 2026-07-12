@@ -149,33 +149,33 @@ const setStorageData = <T>(key: string, data: T[]) => {
 
 // --- API Implementation ---
 export const api = {
-  async ensureAuthenticated(): Promise<void> {
-    const token = localStorage.getItem('token');
-    if (token) return;
+  async login(email: string, password: string): Promise<any> {
+    const res = await fetch('/api/v1/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) throw new Error('Invalid credentials');
+    const data = await res.json();
+    localStorage.setItem('token', data.access_token);
+    return data;
+  },
 
-    try {
-      const res = await fetch('/api/v1/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: 'admin@transitops.local',
-          password: 'password123',
-        }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('currentUser', JSON.stringify({
-          id: data.user.id,
-          email: data.user.email,
-          full_name: data.user.full_name,
-          role: 'Fleet Manager',
-          company_id: data.user.company_id,
-        }));
-      }
-    } catch (err) {
-      console.error('Programmatic authentication failed:', err);
+  async getFuelPrices(): Promise<{price: number, source: string}> {
+    const res = await this._fetch('/api/v1/trips/fuel-prices', {
+      headers: this.getAuthHeaders()
+    });
+    return res.json();
+  },
+
+  async _fetch(url: string, options: RequestInit = {}): Promise<Response> {
+    const res = await fetch(url, options);
+    if (res.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('currentUser');
+      window.location.href = '/login';
     }
+    return res;
   },
 
   // Base fetch config
@@ -213,8 +213,7 @@ export const api = {
         fleet_utilization_pct: fleetUtilizationPct,
       };
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/dashboard/kpis', { headers: this.getAuthHeaders() });
+      const res = await this._fetch('/api/v1/dashboard/kpis', { headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       return res.json();
     }
@@ -233,8 +232,7 @@ export const api = {
         driver: drivers.find(d => d.id === trip.driver_id),
       }));
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/trips', { headers: this.getAuthHeaders() });
+      const res = await this._fetch('/api/v1/trips', { headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       const data = await res.json();
       const trips = Array.isArray(data) ? data : (data.items || []);
@@ -270,8 +268,7 @@ export const api = {
       setStorageData('to_trips', [...trips, newTrip]);
       return newTrip;
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/trips', {
+      const res = await this._fetch('/api/v1/trips', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...this.getAuthHeaders() },
         body: JSON.stringify(tripData),
@@ -309,8 +306,7 @@ export const api = {
 
       return updatedTrip;
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch(`/api/v1/trips/${id}/dispatch`, {
+      const res = await this._fetch(`/api/v1/trips/${id}/dispatch`, {
         method: 'POST',
         headers: { 'Idempotency-Key': crypto.randomUUID(), ...this.getAuthHeaders() },
       });
@@ -363,8 +359,7 @@ export const api = {
 
       return updatedTrip;
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch(`/api/v1/trips/${id}/complete`, {
+      const res = await this._fetch(`/api/v1/trips/${id}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...this.getAuthHeaders() },
         body: JSON.stringify(metrics),
@@ -401,8 +396,7 @@ export const api = {
 
       return updatedTrip;
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch(`/api/v1/trips/${id}/cancel`, { method: 'POST', headers: this.getAuthHeaders() });
+      const res = await this._fetch(`/api/v1/trips/${id}/cancel`, { method: 'POST', headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       return res.json();
     }
@@ -413,8 +407,7 @@ export const api = {
     if (demo) {
       return getStorageData<Vehicle>('to_vehicles');
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/vehicles', { headers: this.getAuthHeaders() });
+      const res = await this._fetch('/api/v1/vehicles', { headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       const data = await res.json();
       return data.items || data;
@@ -426,8 +419,7 @@ export const api = {
     if (demo) {
       return getStorageData<Driver>('to_drivers');
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/drivers', { headers: this.getAuthHeaders() });
+      const res = await this._fetch('/api/v1/drivers', { headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       const data = await res.json();
       return data.items || data;
@@ -444,8 +436,7 @@ export const api = {
         vehicle: vehicles.find(v => v.id === log.vehicle_id),
       }));
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/maintenance', { headers: this.getAuthHeaders() });
+      const res = await this._fetch('/api/v1/maintenance', { headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       const data = await res.json();
       const logs = Array.isArray(data) ? data : (data.items || []);
@@ -481,8 +472,7 @@ export const api = {
       setStorageData('to_vehicles', updatedVehicles);
       return newLog;
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/maintenance', {
+      const res = await this._fetch('/api/v1/maintenance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...this.getAuthHeaders() },
         body: JSON.stringify(data),
@@ -516,8 +506,7 @@ export const api = {
 
       return updatedLog;
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch(`/api/v1/maintenance/${id}/close`, { method: 'POST', headers: this.getAuthHeaders() });
+      const res = await this._fetch(`/api/v1/maintenance/${id}/close`, { method: 'POST', headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       return res.json();
     }
@@ -533,8 +522,7 @@ export const api = {
         vehicle: vehicles.find(v => v.id === f.vehicle_id),
       }));
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/fuel-logs', { headers: this.getAuthHeaders() });
+      const res = await this._fetch('/api/v1/fuel-logs', { headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       const data = await res.json();
       const logs = Array.isArray(data) ? data : (data.items || []);
@@ -555,8 +543,7 @@ export const api = {
         vehicle: vehicles.find(v => v.id === e.vehicle_id),
       }));
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/expenses', { headers: this.getAuthHeaders() });
+      const res = await this._fetch('/api/v1/expenses', { headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       const data = await res.json();
       const expenses = Array.isArray(data) ? data : (data.items || []);
@@ -583,8 +570,7 @@ export const api = {
       setStorageData('to_fuel', [...logs, newLog]);
       return newLog;
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/fuel-logs', {
+      const res = await this._fetch('/api/v1/fuel-logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...this.getAuthHeaders() },
         body: JSON.stringify(data),
@@ -609,8 +595,7 @@ export const api = {
       setStorageData('to_expenses', [...expenses, newExpense]);
       return newExpense;
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/expenses', {
+      const res = await this._fetch('/api/v1/expenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...this.getAuthHeaders() },
         body: JSON.stringify(data),
@@ -634,8 +619,7 @@ export const api = {
         { date: '07-12', utilization_pct: 80 },
       ];
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/reports/fleet-utilization', { headers: this.getAuthHeaders() });
+      const res = await this._fetch('/api/v1/reports/fleet-utilization', { headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       return res.json();
     }
@@ -650,8 +634,7 @@ export const api = {
         { type: 'Light Duty', km_per_liter: 8.2 },
       ];
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/reports/fuel-efficiency', { headers: this.getAuthHeaders() });
+      const res = await this._fetch('/api/v1/reports/fuel-efficiency', { headers: this.getAuthHeaders() });
       if (!res.ok) throw new Error('API Error');
       return res.json();
     }
@@ -669,8 +652,7 @@ export const api = {
         { month: 'Jul', Fuel: 5900, Maintenance: 2100, Tolls: 680, Insurance: 1800 },
       ];
     } else {
-      await this.ensureAuthenticated();
-      const res = await fetch('/api/v1/reports/vehicle-roi', { headers: this.getAuthHeaders() });
+      const res = await this._fetch('/api/v1/reports/vehicle-roi', { headers: this.getAuthHeaders() });
       if (!res.ok) return [];
       return res.json();
     }

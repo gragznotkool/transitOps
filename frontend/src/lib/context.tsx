@@ -29,7 +29,6 @@ interface AppContextType {
   // Auth State (with mockup capability)
   currentUser: User | null;
   setCurrentUser: (user: User | null) => void;
-  switchRole: (role: string) => void;
   logout: () => void;
 
   // Demo mode
@@ -63,14 +62,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('currentUser');
     if (saved) return JSON.parse(saved);
-    // Initial mock user for hackathon convenience
-    return {
-      id: 1,
-      email: 'manager@transitops.local',
-      full_name: 'Alex Rivera',
-      role: 'Fleet Manager',
-      company_id: 1,
-    };
+    return null;
   });
 
   // Synchronize Dark Mode Class
@@ -104,18 +96,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
-  const switchRole = (role: string) => {
-    if (!currentUser) return;
-    setCurrentUser({
-      ...currentUser,
-      role: role,
-      full_name: `${role} User`,
-      email: `${role.toLowerCase().replace(/\s+/g, '')}@transitops.local`,
-    });
-  };
-
   const logout = () => {
     setCurrentUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
   };
 
   return (
@@ -128,7 +112,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         resetFilters,
         currentUser,
         setCurrentUser,
-        switchRole,
         logout,
         demoMode,
         setDemoMode,

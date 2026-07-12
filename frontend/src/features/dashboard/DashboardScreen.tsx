@@ -94,7 +94,7 @@ export const DashboardScreen: React.FC = () => {
         filename: `transitops-dashboard-${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }, pagebreak: { mode: 'avoid-all' }
       };
       
       html2pdf().from(element).set(opt).save().then(() => {
@@ -559,6 +559,10 @@ export const DashboardScreen: React.FC = () => {
         </div>
 
       </div>
+
+      {/* PDF Export Target boundary end */}
+      {showAddVehicle && <AddVehicleModal onClose={() => setShowAddVehicle(false)} />}
     </div>
+
   );
 };

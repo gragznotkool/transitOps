@@ -148,9 +148,9 @@ export const FinanceScreen: React.FC = () => {
           </div>
           <div className="mt-4">
             <span className="text-3xl font-bold font-display text-slate-900 dark:text-white">
-              ${metrics.totalFuel.toLocaleString()}
+              ₹{metrics.totalFuel.toLocaleString()}
             </span>
-            <span className="text-xs text-slate-400 block mt-1">Average: ${metrics.avgLiterCost}/L</span>
+            <span className="text-xs text-slate-400 block mt-1">Average: ₹{metrics.avgLiterCost}/L</span>
           </div>
         </div>
 
@@ -164,7 +164,7 @@ export const FinanceScreen: React.FC = () => {
           </div>
           <div className="mt-4">
             <span className="text-3xl font-bold font-display text-slate-900 dark:text-white">
-              ${metrics.totalExpenses.toLocaleString()}
+              ₹{metrics.totalExpenses.toLocaleString()}
             </span>
             <span className="text-xs text-slate-400 block mt-1">Tolls, insurance, and fees</span>
           </div>
@@ -180,7 +180,7 @@ export const FinanceScreen: React.FC = () => {
           </div>
           <div className="mt-4">
             <span className="text-3xl font-bold font-display text-slate-900 dark:text-white">
-              ${metrics.grandTotal.toLocaleString()}
+              ₹{metrics.grandTotal.toLocaleString()}
             </span>
             <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold block mt-1">Accumulated fleet overhead</span>
           </div>
@@ -236,7 +236,7 @@ export const FinanceScreen: React.FC = () => {
                       </td>
                       <td className="py-4 font-semibold">{log.liters} Liters</td>
                       <td className="py-4 text-xs">{new Date(log.logged_date).toLocaleDateString()}</td>
-                      <td className="py-4 text-right font-bold text-slate-800 dark:text-slate-150">${log.cost.toLocaleString()}</td>
+                      <td className="py-4 text-right font-bold text-slate-800 dark:text-slate-150">₹{log.cost.toLocaleString()}</td>
                     </tr>
                   ))
                 ) : (
@@ -279,7 +279,7 @@ export const FinanceScreen: React.FC = () => {
                       </td>
                       <td className="py-4 max-w-[200px] truncate text-xs text-slate-500 dark:text-slate-450">{exp.notes || '—'}</td>
                       <td className="py-4 text-xs">{new Date(exp.expense_date).toLocaleDateString()}</td>
-                      <td className="py-4 text-right font-bold text-slate-800 dark:text-slate-150">${exp.amount.toLocaleString()}</td>
+                      <td className="py-4 text-right font-bold text-slate-800 dark:text-slate-150">₹{exp.amount.toLocaleString()}</td>
                     </tr>
                   ))
                 ) : (
@@ -357,7 +357,7 @@ export const FinanceScreen: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Cost ($)</label>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Cost (₹)</label>
                   <input 
                     type="number" step="any" required
                     value={fuelForm.cost}
@@ -447,7 +447,7 @@ export const FinanceScreen: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Amount ($)</label>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Amount (₹)</label>
                   <input 
                     type="number" required
                     value={expenseForm.amount}

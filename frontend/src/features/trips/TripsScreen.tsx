@@ -10,6 +10,8 @@ import {
   useCancelTripMutation
 } from '../../lib/queries';
 import { TRIP_STATUS_COLORS } from '../../lib/statusColors';
+import { LocationAutocomplete } from '../../components/ui/LocationAutocomplete';
+import { api } from '../../lib/api';
 import { 
   Plus, 
   Navigation, 
@@ -64,9 +66,37 @@ export const TripsScreen: React.FC = () => {
     destination: 'Depot B',
     distance: '350',
     weight: '6000',
+    source_lat: undefined as number | undefined,
+    source_lon: undefined as number | undefined,
+    dest_lat: undefined as number | undefined,
+    dest_lon: undefined as number | undefined,
   });
 
   const selectedTrip = trips?.find(t => t.id === selectedTripId);
+
+  const [liveFuelPrice, setLiveFuelPrice] = useState(111.45);
+  
+  // Fetch live fuel prices on mount
+  React.useEffect(() => {
+    api.getFuelPrices().then(res => {
+      if (res && res.price) setLiveFuelPrice(res.price);
+    }).catch(console.error);
+  }, []);
+
+  // Fetch OSRM driving distance when coordinates change
+  React.useEffect(() => {
+    if (simForm.source_lat && simForm.source_lon && simForm.dest_lat && simForm.dest_lon) {
+      fetch(`http://router.project-osrm.org/route/v1/driving/${simForm.source_lon},${simForm.source_lat};${simForm.dest_lon},${simForm.dest_lat}?overview=false`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.routes && data.routes[0]) {
+            const distKm = (data.routes[0].distance / 1000).toFixed(1);
+            setSimForm(prev => ({ ...prev, distance: distKm }));
+          }
+        }).catch(err => console.error('OSRM fetch error:', err));
+    }
+  }, [simForm.source_lat, simForm.source_lon, simForm.dest_lat, simForm.dest_lon]);
+
 
   // Filtered lists for dropdown selection (only show Available ones)
   const availableVehicles = vehicles?.filter(v => v.status === 'Available');
@@ -88,8 +118,8 @@ export const TripsScreen: React.FC = () => {
         if (v.type === 'Light Duty') kmPerLiter = 8.5;
         else if (v.type === 'Medium Duty') kmPerLiter = 6.0;
 
-        const fuelCost = capacityOk ? (distance / kmPerLiter) * 1.85 : 0; // $1.85 per liter
-        const driverCost = capacityOk ? distance * 0.40 : 0; // $0.40 per km driver wage
+        const fuelCost = capacityOk ? (distance / kmPerLiter) * liveFuelPrice : 0; // Live ₹/liter
+        const driverCost = capacityOk ? distance * 12.5 : 0; // ₹12.5 per km driver wage
         const totalCost = fuelCost + driverCost;
 
         return {
@@ -206,28 +236,24 @@ export const TripsScreen: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-darkBorder pb-3">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white font-display flex items-center gap-2">
               <Calculator className="w-5 h-5 text-brand-500" />
-              Pre-Trip Route Cost Simulator
+              Pre-Trip Route Cost Simulator (Live Fuel: ₹{liveFuelPrice}/L)
             </h3>
             <span className="text-xs text-slate-400">Compare efficiency models before dispatching</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">From</label>
-              <input 
-                type="text" 
+              <LocationAutocomplete 
+                label="From"
                 value={simForm.source}
-                onChange={e => setSimForm({ ...simForm, source: e.target.value })}
-                className="w-full text-sm p-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-darkBorder text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                onChange={(val, lat, lon) => setSimForm({ ...simForm, source: val, source_lat: lat, source_lon: lon })}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">To</label>
-              <input 
-                type="text" 
+              <LocationAutocomplete 
+                label="To"
                 value={simForm.destination}
-                onChange={e => setSimForm({ ...simForm, destination: e.target.value })}
-                className="w-full text-sm p-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-darkBorder text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                onChange={(val, lat, lon) => setSimForm({ ...simForm, destination: val, dest_lat: lat, dest_lon: lon })}
               />
             </div>
             <div>
@@ -287,7 +313,7 @@ export const TripsScreen: React.FC = () => {
                   ) : (
                     <div className="flex items-baseline justify-between">
                       <span className="text-xs text-slate-400">Est. Total Cost:</span>
-                      <span className="text-lg font-extrabold text-slate-800 dark:text-slate-200">${res.totalCost}</span>
+                      <span className="text-lg font-extrabold text-slate-800 dark:text-slate-200">₹{res.totalCost}</span>
                     </div>
                   )}
                 </div>
@@ -598,23 +624,17 @@ export const TripsScreen: React.FC = () => {
             <form onSubmit={handleCreateTrip} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Source Depot</label>
-                  <input 
-                    type="text" required
+                  <LocationAutocomplete 
+                    label="Origin Hub"
                     value={tripForm.source}
-                    onChange={e => setTripForm({ ...tripForm, source: e.target.value })}
-                    placeholder="e.g. Dallas Port"
-                    className="w-full text-sm p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-darkBorder text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    onChange={(val) => setTripForm({ ...tripForm, source: val })}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Destination Hub</label>
-                  <input 
-                    type="text" required
+                  <LocationAutocomplete 
+                    label="Destination Hub"
                     value={tripForm.destination}
-                    onChange={e => setTripForm({ ...tripForm, destination: e.target.value })}
-                    placeholder="e.g. Houston Hub"
-                    className="w-full text-sm p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-darkBorder text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    onChange={(val) => setTripForm({ ...tripForm, destination: val })}
                   />
                 </div>
               </div>
