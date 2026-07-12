@@ -5,7 +5,6 @@ from datetime import date, timedelta
 
 sys.path.append(os.path.dirname(__file__))
 
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.core.db import async_session_maker
 from app.core.security import get_password_hash

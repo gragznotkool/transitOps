@@ -1,7 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from datetime import date
-from app.core.constants import DriverStatus
 
 class DriverBase(BaseModel):
     full_name: str

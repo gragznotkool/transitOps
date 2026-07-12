@@ -4,7 +4,6 @@ from sqlalchemy import func
 from fastapi import HTTPException, status
 from app.models.drivers import Driver
 from app.modules.drivers import schemas
-from app.core.constants import DriverStatus
 
 async def get_drivers(db: AsyncSession, company_id: int, status: str = None, page: int = 1, limit: int = 50):
     query = select(Driver).filter(Driver.company_id == company_id)

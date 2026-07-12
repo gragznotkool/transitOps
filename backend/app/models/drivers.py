@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Date
 from app.models.base import TenantBase
 from app.core.constants import DriverStatus
 

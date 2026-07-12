@@ -24,9 +24,12 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from app.core.config import settings
 from app.core.db import Base
 # Import all models to ensure they are registered with Base.metadata
-from app.models.core import Company, Role, User
-from app.models.fleet import Vehicle
-from app.models.drivers import Driver
+from app.models.core import Company, Role, User  # noqa: F401, E402
+from app.models.fleet import Vehicle  # noqa: F401, E402
+from app.models.drivers import Driver  # noqa: F401, E402
+from app.models.trips import Trip  # noqa: F401, E402
+from app.models.maintenance import MaintenanceLog  # noqa: F401, E402
+from app.models.finance import FuelLog, Expense  # noqa: F401, E402
 
 # add your model's MetaData object here
 # for 'autogenerate' support

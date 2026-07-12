@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float
 from app.models.base import TenantBase
 from app.core.constants import VehicleStatus
 

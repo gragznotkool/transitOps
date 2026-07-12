@@ -1,6 +1,5 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
-from app.core.constants import VehicleStatus
 
 class VehicleBase(BaseModel):
     registration_number: str
