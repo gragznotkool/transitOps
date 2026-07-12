@@ -39,11 +39,11 @@ async def seed_data():
         admin_role = result.scalars().first()
 
         # Seed Admin User
-        result = await session.execute(select(User).filter(User.email == "admin@transitops.local"))
+        result = await session.execute(select(User).filter(User.email == "admin@transitops.example"))
         user = result.scalars().first()
         if not user:
             user = User(
-                email="admin@transitops.local",
+                email="admin@transitops.example",
                 full_name="System Admin",
                 hashed_password=get_password_hash("password123"),
                 role_id=admin_role.id,
@@ -51,7 +51,7 @@ async def seed_data():
             )
             session.add(user)
             await session.commit()
-            print("Admin user seeded: admin@transitops.local / password123")
+            print("Admin user seeded: admin@transitops.example / password123")
 
         # Seed initial vehicles
         result = await session.execute(select(Vehicle).filter(Vehicle.registration_number == "TRK-001"))
